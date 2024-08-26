@@ -1,0 +1,25 @@
+﻿  back.cpp
+  bullet.cpp
+  data.cpp
+  demo.cpp
+  democpu.cpp
+  enemy.cpp
+  explosion.cpp
+  fade.cpp
+  game.cpp
+  input.cpp
+  main.cpp
+  option.cpp
+  player.cpp
+  rank.cpp
+  result.cpp
+  score.cpp
+  sound.cpp
+  title.cpp
+  tuto.cpp
+  コード生成しています。
+  36 of 141 functions (25.5%) were compiled, the rest were copied from previous compilation.
+    6 functions were new in current compilation
+    18 functions had inline decision re-evaluated but remain unchanged
+  コード生成が終了しました。
+  player2.vcxproj -> C:\Users\student\source\repos\player2\player2.exe
