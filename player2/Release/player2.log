@@ -1,8 +1,10 @@
 ﻿  back.cpp
   bullet.cpp
+  cursor.cpp
   data.cpp
   demo.cpp
   democpu.cpp
+  effect.cpp
   enemy.cpp
   explosion.cpp
   fade.cpp
@@ -16,10 +18,16 @@
   score.cpp
   sound.cpp
   title.cpp
+  コンパイル中...
   tuto.cpp
   コード生成しています。
-  36 of 141 functions (25.5%) were compiled, the rest were copied from previous compilation.
-    6 functions were new in current compilation
-    18 functions had inline decision re-evaluated but remain unchanged
+C:\Users\student\source\repos\player2\input.cpp(797): warning C4172: ローカル変数またはテンポラリのアドレスを返します: fStick
+C:\Users\student\source\repos\player2\input.cpp(2072): warning C4172: ローカル変数またはテンポラリのアドレスを返します: fStick
+C:\Users\student\source\repos\player2\input.cpp(418): warning C4172: ローカル変数またはテンポラリのアドレスを返します: MouseMove
+C:\Users\student\source\repos\player2\data.cpp(72): warning C4172: ローカル変数またはテンポラリのアドレスを返します: aData
+C:\Users\student\source\repos\player2\data.cpp(82): warning C4172: ローカル変数またはテンポラリのアドレスを返します: aData
+  139 of 191 functions (72.8%) were compiled, the rest were copied from previous compilation.
+    55 functions were new in current compilation
+    8 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   player2.vcxproj -> C:\Users\student\source\repos\player2\player2.exe

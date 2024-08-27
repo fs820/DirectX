@@ -32,6 +32,7 @@ char g_ConName[CONTROLLER_MAX][64] = { NULL };
 int g_XcontrollerNum = 0;
 int g_DcontrollerNum = 0;
 bool g_bUnCon = false;
+bool g_bX = false;
 
 //--------------------------
 //
@@ -551,7 +552,7 @@ bool GetJoykeyTrigger(JOYKEY key, CONTROLLER Controller)
 				}
 			}
 
-			if (bOldJoy[key] == false && (((g_joykeyState[i].Gamepad.wButtons & (0x01 << key)) ? true : false) == true || Trigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD))
+			if (bOldJoy[i][key] == false && (((g_joykeyState[i].Gamepad.wButtons & (0x01 << key)) ? true : false) == true || Trigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD))
 			{
 				bOldJoy[i][key] = true;
 				return true;
@@ -559,7 +560,6 @@ bool GetJoykeyTrigger(JOYKEY key, CONTROLLER Controller)
 			else if (bOldJoy[i][key] == true && (((g_joykeyState[i].Gamepad.wButtons & (0x01 << key)) ? true : false) == false && Trigger <= XINPUT_GAMEPAD_TRIGGER_THRESHOLD))
 			{
 				bOldJoy[i][key] = false;
-				return false;
 			}
 		}
 
@@ -578,7 +578,7 @@ bool GetJoykeyTrigger(JOYKEY key, CONTROLLER Controller)
 		}
 	}
 
-	if (bOldJoy[key] == false && (((g_joykeyState[Controller].Gamepad.wButtons & (0x01 << key)) ? true : false) == true|| Trigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD))
+	if (bOldJoy[Controller][key] == false && (((g_joykeyState[Controller].Gamepad.wButtons & (0x01 << key)) ? true : false) == true|| Trigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD))
 	{
 		bOldJoy[Controller][key] = true;
 		return true;
@@ -631,18 +631,15 @@ bool GetJoykeyRelease(JOYKEY key, CONTROLLER Controller)
 				else
 				{
 					KeyPutTime[i][key] = 0;
-					return false;
 				}
 			}
 			else if (bOldJoy[i][key] == false && (((g_joykeyState[i].Gamepad.wButtons & (0x01 << key)) ? true : false) == true || Trigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD))
 			{
 				bOldJoy[i][key] = true;
-				return false;
 			}
 			else if (bOldJoy[i][key] == true && (((g_joykeyState[i].Gamepad.wButtons & (0x01 << key)) ? true : false) == true || Trigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD))
 			{
 				KeyPutTime[i][key]++;
-				return false;
 			}
 		}
 
@@ -729,7 +726,6 @@ bool GetJoykeyRepeat(JOYKEY key, CONTROLLER Controller)
 					KeyPutTime[i][key] = 0;
 					bOldJoy[i][key] = true;
 				}
-				return false;
 			}
 			else
 			{
@@ -808,6 +804,81 @@ bool JoyStickPress(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 {
 	float fStick = 0.0f;
 
+	if (Controller==CONTROLLER_MAX)
+	{
+		for (int i = 0; i < CONTROLLER_MAX; i++)
+		{
+			switch (Stick)
+			{
+			case STICK_LEFT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLX;
+					break;
+				}
+				break;
+			case STICK_RIGHT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRX;
+					break;
+				}
+				break;
+			}
+
+			fStick /= STICK_NUM;
+
+			switch (DireStick)
+			{
+			case DIRESTICK_UP:
+				if (fStick > STICK_DED)
+				{
+					return true;
+				}
+				break;
+			case DIRESTICK_DOWN:
+				if (fStick < -STICK_DED)
+				{
+					return true;
+				}
+				break;
+			case DIRESTICK_LEFT:
+				if (fStick < -STICK_DED)
+				{
+					return true;
+				}
+				break;
+			case DIRESTICK_RIGHT:
+				if (fStick > STICK_DED)
+				{
+					return true;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
 	switch (Stick)
 	{
 	case STICK_LEFT:
@@ -863,6 +934,8 @@ bool JoyStickPress(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 		return fStick > STICK_DED;
 		break;
 	}
+
+	return false;
 }
 
 //-----------------------------
@@ -873,6 +946,102 @@ bool JoyStickTrigger(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 	float fStick = 0.0f;
 	static bool bOldStick[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = {false};
 
+	if (Controller == CONTROLLER_MAX)
+	{
+		for (int i = 0; i < CONTROLLER_MAX; i++)
+		{
+			switch (Stick)
+			{
+			case STICK_LEFT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLX;
+					break;
+				}
+				break;
+			case STICK_RIGHT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRX;
+					break;
+				}
+				break;
+			}
+
+			fStick /= STICK_NUM;
+
+			switch (DireStick)
+			{
+			case DIRESTICK_UP:
+				if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick <= STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+				}
+				break;
+			case DIRESTICK_DOWN:
+				if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick >= -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+				}
+					break;
+			case DIRESTICK_LEFT:
+				if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick >= -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+				}
+				break;
+			case DIRESTICK_RIGHT:
+				if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick <= STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
+
 	switch (Stick)
 	{
 	case STICK_LEFT:
@@ -980,6 +1149,8 @@ bool JoyStickTrigger(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 		}
 		break;
 	}
+
+	return false;
 }
 
 //-----------------------------
@@ -991,6 +1162,150 @@ bool JoyStickRelease(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 	static bool bOldStick[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = { false };
 	static int nStickTime[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = { 0 };
 
+	if (Controller == CONTROLLER_MAX)
+	{
+		for (int i = 0; i < CONTROLLER_MAX; i++)
+		{
+			switch (Stick)
+			{
+			case STICK_LEFT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLX;
+					break;
+				}
+				break;
+			case STICK_RIGHT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRX;
+					break;
+				}
+				break;
+			}
+
+			fStick /= STICK_NUM;
+
+			switch (DireStick)
+			{
+			case DIRESTICK_UP:
+				if (bOldStick[i][Stick][DireStick] == true && fStick <= STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					if (nStickTime[i][Stick][DireStick] >= RELEASE_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						return true;
+					}
+					else
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+					}
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick > STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+				}
+				break;
+			case DIRESTICK_DOWN:
+				if (bOldStick[i][Stick][DireStick] == true && fStick >= -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					if (nStickTime[i][Stick][DireStick] >= RELEASE_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						return true;
+					}
+					else
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+					}
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick < -STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+				}
+				break;
+			case DIRESTICK_LEFT:
+				if (bOldStick[i][Stick][DireStick] == true && fStick >= -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					if (nStickTime[i][Stick][DireStick] >= RELEASE_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						return true;
+					}
+					else
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+					}
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick < -STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+				}
+				break;
+			case DIRESTICK_RIGHT:
+				if (bOldStick[i][Stick][DireStick] == true && fStick <= STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					if (nStickTime[i][Stick][DireStick] >= RELEASE_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						return true;
+					}
+					else
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+					}
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick > STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
+
 	switch (Stick)
 	{
 	case STICK_LEFT:
@@ -1154,6 +1469,8 @@ bool JoyStickRelease(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 		}
 		break;
 	}
+
+	return false;
 }
 
 //-----------------------------
@@ -1165,6 +1482,141 @@ bool JoyStickRepeat(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 	static bool bOldStick[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = { false };
 	static int nStickTime[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = { 0 };
 
+	if (Controller == CONTROLLER_MAX)
+	{
+		for (int i = 0; i < CONTROLLER_MAX; i++)
+		{
+			switch (Stick)
+			{
+			case STICK_LEFT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbLX;
+					break;
+				}
+				break;
+			case STICK_RIGHT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_joykeyState[i].Gamepad.sThumbRX;
+					break;
+				}
+				break;
+			}
+
+			fStick /= STICK_NUM;
+
+			switch (DireStick)
+			{
+			case DIRESTICK_UP:
+				if (bOldStick[i][Stick][DireStick] == true && fStick > STICK_DED)
+				{
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+
+					if (nStickTime[i][Stick][DireStick] >= REPEAT_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						bOldStick[i][Stick][DireStick] = true;
+					}
+				}
+				else
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					nStickTime[i][Stick][DireStick] = 0;
+				}
+				break;
+			case DIRESTICK_DOWN:
+				if (bOldStick[i][Stick][DireStick] == true && fStick < -STICK_DED)
+				{
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+
+					if (nStickTime[i][Stick][DireStick] >= REPEAT_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						bOldStick[i][Stick][DireStick] = true;
+					}
+				}
+				else
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					nStickTime[i][Stick][DireStick] = 0;
+				}
+				break;
+			case DIRESTICK_LEFT:
+				if (bOldStick[i][Stick][DireStick] == true && fStick < -STICK_DED)
+				{
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+
+					if (nStickTime[i][Stick][DireStick] >= REPEAT_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						bOldStick[i][Stick][DireStick] = true;
+					}
+				}
+				else
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					nStickTime[i][Stick][DireStick] = 0;
+				}
+				break;
+			case DIRESTICK_RIGHT:
+				if (bOldStick[i][Stick][DireStick] == true && fStick > STICK_DED)
+				{
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+
+					if (nStickTime[i][Stick][DireStick] >= REPEAT_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						bOldStick[i][Stick][DireStick] = true;
+					}
+				}
+				else
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					nStickTime[i][Stick][DireStick] = 0;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
 	switch (Stick)
 	{
 	case STICK_LEFT:
@@ -1300,6 +1752,8 @@ bool JoyStickRepeat(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 		}
 		break;
 	}
+
+	return false;
 }
 
 //----------------
@@ -1394,7 +1848,7 @@ void UpdatedJoypad(void)
 		}
 	}
 
-	if (g_DcontrollerNum!=ControllerNum)
+	if (g_DcontrollerNum!=(CONTROLLER_MAX-ControllerNum))
 	{
 		g_bUnCon = true;
 		g_pinput->EnumDevices(DI8DEVCLASS_GAMECTRL, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY);
@@ -1433,7 +1887,7 @@ bool GetdJoykeyTrigger(int nkey, CONTROLLER Controller)
 	{
 		for (int i = 0; i < CONTROLLER_MAX; i++)
 		{
-			if (bOldkey[nkey] == false && ((g_djoykeyState[i].rgbButtons[nkey] & 0x80) ? true : false) == true)
+			if (bOldkey[i][nkey] == false && ((g_djoykeyState[i].rgbButtons[nkey] & 0x80) ? true : false) == true)
 			{
 				bOldkey[i][nkey] = true;
 				return true;
@@ -1441,14 +1895,13 @@ bool GetdJoykeyTrigger(int nkey, CONTROLLER Controller)
 			else if (bOldkey[i][nkey] == true && ((g_djoykeyState[i].rgbButtons[nkey] & 0x80) ? true : false) == false)
 			{
 				bOldkey[i][nkey] = false;
-				return false;
 			}
 		}
 
 		return false;
 	}
 
-	if (bOldkey[nkey] == false && ((g_djoykeyState[Controller].rgbButtons[nkey] & 0x80) ? true : false) == true)
+	if (bOldkey[Controller][nkey] == false && ((g_djoykeyState[Controller].rgbButtons[nkey] & 0x80) ? true : false) == true)
 	{
 		bOldkey[Controller][nkey] = true;
 		return true;
@@ -1487,18 +1940,15 @@ bool GetdJoykeyRelease(int nkey, CONTROLLER Controller)
 				else
 				{
 					KeyPutTime[i][nkey] = 0;
-					return false;
 				}
 			}
 			else if (bOldkey[i][nkey] == false && ((g_djoykeyState[i].rgbButtons[nkey] & 0x80) ? true : false) == true)
 			{
 				bOldkey[i][nkey] = true;
-				return false;
 			}
 			else if (bOldkey[i][nkey] == true && ((g_djoykeyState[i].rgbButtons[nkey] & 0x80) ? true : false) == true)
 			{
 				KeyPutTime[i][nkey]++;
-				return false;
 			}
 		}
 
@@ -1560,7 +2010,6 @@ bool GetdJoykeyRepeat(int nkey, CONTROLLER Controller)
 					KeyPutTime[i][nkey] = 0;
 					bOldkey[i][nkey] = true;
 				}
-				return false;
 			}
 			else
 			{
@@ -1621,6 +2070,970 @@ float* GetdJoyStick(STICK Stick, CONTROLLER Controller)
 	fStick[1] += DSTICK_NUM;
 
 	return &fStick[0];
+}
+
+//
+//
+//
+bool dJoyStickPress(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
+{
+	float fStick = 0.0f;
+
+	if (Controller == CONTROLLER_MAX)
+	{
+		for (int i = 0; i < CONTROLLER_MAX; i++)
+		{
+			switch (Stick)
+			{
+			case STICK_LEFT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_djoykeyState[i].lY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_djoykeyState[i].lY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_djoykeyState[i].lX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_djoykeyState[i].lX;
+					break;
+				}
+				break;
+			case STICK_RIGHT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_djoykeyState[i].lRz;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_djoykeyState[i].lRz;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_djoykeyState[i].lZ;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_djoykeyState[i].lZ;
+					break;
+				}
+				break;
+			}
+
+			fStick /= STICK_NUM;
+			fStick += DSTICK_NUM;
+
+			switch (DireStick)
+			{
+			case DIRESTICK_UP:
+				if (fStick < -STICK_DED)
+				{
+					return true;
+				}
+				break;
+			case DIRESTICK_DOWN:
+				if (fStick > STICK_DED)
+				{
+					return true;
+				}
+				break;
+			case DIRESTICK_LEFT:
+				if (fStick < -STICK_DED)
+				{
+					return true;
+				}
+				break;
+			case DIRESTICK_RIGHT:
+				if (fStick > STICK_DED)
+				{
+					return true;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+	switch (Stick)
+	{
+	case STICK_LEFT:
+		switch (DireStick)
+		{
+		case DIRESTICK_UP:
+			fStick = (float)g_djoykeyState[Controller].lY;
+			break;
+		case DIRESTICK_DOWN:
+			fStick = (float)g_djoykeyState[Controller].lY;
+			break;
+		case DIRESTICK_LEFT:
+			fStick = (float)g_djoykeyState[Controller].lX;
+			break;
+		case DIRESTICK_RIGHT:
+			fStick = (float)g_djoykeyState[Controller].lX;
+			break;
+		}
+		break;
+	case STICK_RIGHT:
+		switch (DireStick)
+		{
+		case DIRESTICK_UP:
+			fStick = (float)g_djoykeyState[Controller].lRz;
+			break;
+		case DIRESTICK_DOWN:
+			fStick = (float)g_djoykeyState[Controller].lRz;
+			break;
+		case DIRESTICK_LEFT:
+			fStick = (float)g_djoykeyState[Controller].lZ;
+			break;
+		case DIRESTICK_RIGHT:
+			fStick = (float)g_djoykeyState[Controller].lZ;
+			break;
+		}
+		break;
+	}
+
+	fStick /= STICK_NUM;
+	fStick += DSTICK_NUM;
+
+	switch (DireStick)
+	{
+	case DIRESTICK_UP:
+		return fStick > STICK_DED;
+		break;
+	case DIRESTICK_DOWN:
+		return fStick < -STICK_DED;
+		break;
+	case DIRESTICK_LEFT:
+		return fStick < -STICK_DED;
+		break;
+	case DIRESTICK_RIGHT:
+		return fStick > STICK_DED;
+		break;
+	}
+
+	return false;
+}
+
+//
+//
+//
+bool dJoyStickTrigger(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
+{
+	float fStick = 0.0f;
+	static bool bOldStick[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = { false };
+
+	if (Controller == CONTROLLER_MAX)
+	{
+		for (int i = 0; i < CONTROLLER_MAX; i++)
+		{
+			switch (Stick)
+			{
+			case STICK_LEFT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_djoykeyState[Controller].lY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_djoykeyState[Controller].lY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_djoykeyState[Controller].lX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_djoykeyState[Controller].lX;
+					break;
+				}
+				break;
+			case STICK_RIGHT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_djoykeyState[Controller].lRz;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_djoykeyState[Controller].lRz;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_djoykeyState[Controller].lZ;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_djoykeyState[Controller].lZ;
+					break;
+				}
+				break;
+			}
+
+			fStick /= STICK_NUM;
+			fStick += DSTICK_NUM;
+
+			switch (DireStick)
+			{
+			case DIRESTICK_UP:
+				if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick >= -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+				}
+				break;
+			case DIRESTICK_DOWN:
+				if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick <= STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+				}
+				break;
+			case DIRESTICK_LEFT:
+				if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick >= -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+				}
+				break;
+			case DIRESTICK_RIGHT:
+				if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick <= STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
+
+	switch (Stick)
+	{
+	case STICK_LEFT:
+		switch (DireStick)
+		{
+		case DIRESTICK_UP:
+			fStick = (float)g_djoykeyState[Controller].lY;
+			break;
+		case DIRESTICK_DOWN:
+			fStick = (float)g_djoykeyState[Controller].lY;
+			break;
+		case DIRESTICK_LEFT:
+			fStick = (float)g_djoykeyState[Controller].lX;
+			break;
+		case DIRESTICK_RIGHT:
+			fStick = (float)g_djoykeyState[Controller].lX;
+			break;
+		}
+		break;
+	case STICK_RIGHT:
+		switch (DireStick)
+		{
+		case DIRESTICK_UP:
+			fStick = (float)g_djoykeyState[Controller].lRz;
+			break;
+		case DIRESTICK_DOWN:
+			fStick = (float)g_djoykeyState[Controller].lRz;
+			break;
+		case DIRESTICK_LEFT:
+			fStick = (float)g_djoykeyState[Controller].lZ;
+			break;
+		case DIRESTICK_RIGHT:
+			fStick = (float)g_djoykeyState[Controller].lZ;
+			break;
+		}
+		break;
+	}
+
+	fStick /= STICK_NUM;
+	fStick += DSTICK_NUM;
+
+	switch (DireStick)
+	{
+	case DIRESTICK_UP:
+		if (bOldStick[Controller][Stick][DireStick] == false && fStick < -STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = true;
+			return true;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == true && fStick >= -STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			return false;
+		}
+		else
+		{
+			return false;
+		}
+		break;
+	case DIRESTICK_DOWN:
+		if (bOldStick[Controller][Stick][DireStick] == false && fStick > STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = true;
+			return true;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == true && fStick <= STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			return false;
+		}
+		else
+		{
+			return false;
+		}
+		break;
+	case DIRESTICK_LEFT:
+		if (bOldStick[Controller][Stick][DireStick] == false && fStick < -STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = true;
+			return true;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == true && fStick >= -STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			return false;
+		}
+		else
+		{
+			return false;
+		}
+		break;
+	case DIRESTICK_RIGHT:
+		if (bOldStick[Controller][Stick][DireStick] == false && fStick > STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = true;
+			return true;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == true && fStick <= STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			return false;
+		}
+		else
+		{
+			return false;
+		}
+		break;
+	}
+
+	return false;
+}
+
+//
+//
+//
+bool dJoyStickRelease(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
+{
+	float fStick = 0.0f;
+	static bool bOldStick[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = { false };
+	static int nStickTime[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = { 0 };
+
+	if (Controller == CONTROLLER_MAX)
+	{
+		for (int i = 0; i < CONTROLLER_MAX; i++)
+		{
+			switch (Stick)
+			{
+			case STICK_LEFT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_djoykeyState[Controller].lY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_djoykeyState[Controller].lY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_djoykeyState[Controller].lX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_djoykeyState[Controller].lX;
+					break;
+				}
+				break;
+			case STICK_RIGHT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_djoykeyState[Controller].lRz;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_djoykeyState[Controller].lRz;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_djoykeyState[Controller].lZ;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_djoykeyState[Controller].lZ;
+					break;
+				}
+				break;
+			}
+
+			fStick /= STICK_NUM;
+			fStick += DSTICK_NUM;
+
+			switch (DireStick)
+			{
+			case DIRESTICK_UP:
+				if (bOldStick[i][Stick][DireStick] == true && fStick >= -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					if (nStickTime[i][Stick][DireStick] >= RELEASE_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						return true;
+					}
+					else
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+					}
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick < -STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+				}
+				break;
+			case DIRESTICK_DOWN:
+				if (bOldStick[i][Stick][DireStick] == true && fStick <= STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					if (nStickTime[i][Stick][DireStick] >= RELEASE_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						return true;
+					}
+					else
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+					}
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick > STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+				}
+			case DIRESTICK_LEFT:
+				if (bOldStick[i][Stick][DireStick] == true && fStick >= -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					if (nStickTime[i][Stick][DireStick] >= RELEASE_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						return true;
+					}
+					else
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+					}
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick < -STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+				}
+				break;
+			case DIRESTICK_RIGHT:
+				if (bOldStick[i][Stick][DireStick] == true && fStick <= STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					if (nStickTime[i][Stick][DireStick] >= RELEASE_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						return true;
+					}
+					else
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+					}
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					bOldStick[i][Stick][DireStick] = true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == true && fStick > STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
+
+	switch (Stick)
+	{
+	case STICK_LEFT:
+		switch (DireStick)
+		{
+		case DIRESTICK_UP:
+			fStick = (float)g_djoykeyState[Controller].lY;
+			break;
+		case DIRESTICK_DOWN:
+			fStick = (float)g_djoykeyState[Controller].lY;
+			break;
+		case DIRESTICK_LEFT:
+			fStick = (float)g_djoykeyState[Controller].lX;
+			break;
+		case DIRESTICK_RIGHT:
+			fStick = (float)g_djoykeyState[Controller].lX;
+			break;
+		}
+		break;
+	case STICK_RIGHT:
+		switch (DireStick)
+		{
+		case DIRESTICK_UP:
+			fStick = (float)g_djoykeyState[Controller].lRz;
+			break;
+		case DIRESTICK_DOWN:
+			fStick = (float)g_djoykeyState[Controller].lRz;
+			break;
+		case DIRESTICK_LEFT:
+			fStick = (float)g_djoykeyState[Controller].lZ;
+			break;
+		case DIRESTICK_RIGHT:
+			fStick = (float)g_djoykeyState[Controller].lZ;
+			break;
+		}
+		break;
+	}
+
+	fStick /= STICK_NUM;
+	fStick += DSTICK_NUM;
+
+	switch (DireStick)
+	{
+	case DIRESTICK_UP:
+		if (bOldStick[Controller][Stick][DireStick] == true && fStick >= -STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			if (nStickTime[Controller][Stick][DireStick] >= RELEASE_TIME)
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				return true;
+			}
+			else
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				return false;
+			}
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == false && fStick < -STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = true;
+			return false;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == true && fStick < -STICK_DED)
+		{
+			nStickTime[Controller][Stick][DireStick]++;
+			return false;
+		}
+		else
+		{
+			return false;
+		}
+		break;
+	case DIRESTICK_DOWN:
+		if (bOldStick[Controller][Stick][DireStick] == true && fStick <= STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			if (nStickTime[Controller][Stick][DireStick] >= RELEASE_TIME)
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				return true;
+			}
+			else
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				return false;
+			}
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == false && fStick > STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = true;
+			return false;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == true && fStick > STICK_DED)
+		{
+			nStickTime[Controller][Stick][DireStick]++;
+			return false;
+		}
+		else
+		{
+			return false;
+		}
+		break;
+	case DIRESTICK_LEFT:
+		if (bOldStick[Controller][Stick][DireStick] == true && fStick >= -STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			if (nStickTime[Controller][Stick][DireStick] >= RELEASE_TIME)
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				return true;
+			}
+			else
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				return false;
+			}
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == false && fStick < -STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = true;
+			return false;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == true && fStick < -STICK_DED)
+		{
+			nStickTime[Controller][Stick][DireStick]++;
+			return false;
+		}
+		else
+		{
+			return false;
+		}
+		break;
+	case DIRESTICK_RIGHT:
+		if (bOldStick[Controller][Stick][DireStick] == true && fStick <= STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			if (nStickTime[Controller][Stick][DireStick] >= RELEASE_TIME)
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				return true;
+			}
+			else
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				return false;
+			}
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == false && fStick > STICK_DED)
+		{
+			bOldStick[Controller][Stick][DireStick] = true;
+			return false;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == true && fStick > STICK_DED)
+		{
+			nStickTime[Controller][Stick][DireStick]++;
+			return false;
+		}
+		else
+		{
+			return false;
+		}
+		break;
+	}
+
+	return false;
+}
+
+//
+//
+//
+bool dJoyStickRepeat(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
+{
+	float fStick = 0.0f;
+	static bool bOldStick[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = { false };
+	static int nStickTime[CONTROLLER_MAX][STICK_MAX][DIRESTICK_MAX] = { 0 };
+
+	if (Controller == CONTROLLER_MAX)
+	{
+		for (int i = 0; i < CONTROLLER_MAX; i++)
+		{
+			switch (Stick)
+			{
+			case STICK_LEFT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_djoykeyState[Controller].lY;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_djoykeyState[Controller].lY;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_djoykeyState[Controller].lX;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_djoykeyState[Controller].lX;
+					break;
+				}
+				break;
+			case STICK_RIGHT:
+				switch (DireStick)
+				{
+				case DIRESTICK_UP:
+					fStick = (float)g_djoykeyState[Controller].lRz;
+					break;
+				case DIRESTICK_DOWN:
+					fStick = (float)g_djoykeyState[Controller].lRz;
+					break;
+				case DIRESTICK_LEFT:
+					fStick = (float)g_djoykeyState[Controller].lZ;
+					break;
+				case DIRESTICK_RIGHT:
+					fStick = (float)g_djoykeyState[Controller].lZ;
+					break;
+				}
+				break;
+			}
+
+			fStick /= STICK_NUM;
+			fStick += DSTICK_NUM;
+
+			switch (DireStick)
+			{
+			case DIRESTICK_UP:
+				if (bOldStick[i][Stick][DireStick] == true && fStick < -STICK_DED)
+				{
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+
+					if (nStickTime[i][Stick][DireStick] >= REPEAT_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						bOldStick[i][Stick][DireStick] = true;
+					}
+				}
+				else
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					nStickTime[i][Stick][DireStick] = 0;
+				}
+				break;
+			case DIRESTICK_DOWN:
+				if (bOldStick[i][Stick][DireStick] == true && fStick > STICK_DED)
+				{
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+
+					if (nStickTime[i][Stick][DireStick] >= REPEAT_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						bOldStick[i][Stick][DireStick] = true;
+					}
+				}
+				else
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					nStickTime[i][Stick][DireStick] = 0;
+				}
+				break;
+			case DIRESTICK_LEFT:
+				if (bOldStick[i][Stick][DireStick] == true && fStick < -STICK_DED)
+				{
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick < -STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+
+					if (nStickTime[i][Stick][DireStick] >= REPEAT_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						bOldStick[i][Stick][DireStick] = true;
+					}
+				}
+				else
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					nStickTime[i][Stick][DireStick] = 0;
+				}
+				break;
+			case DIRESTICK_RIGHT:
+				if (bOldStick[i][Stick][DireStick] == true && fStick > STICK_DED)
+				{
+					return true;
+				}
+				else if (bOldStick[i][Stick][DireStick] == false && fStick > STICK_DED)
+				{
+					nStickTime[i][Stick][DireStick]++;
+
+					if (nStickTime[i][Stick][DireStick] >= REPEAT_TIME)
+					{
+						nStickTime[i][Stick][DireStick] = 0;
+						bOldStick[i][Stick][DireStick] = true;
+					}
+				}
+				else
+				{
+					bOldStick[i][Stick][DireStick] = false;
+					nStickTime[i][Stick][DireStick] = 0;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
+	switch (Stick)
+	{
+	case STICK_LEFT:
+		switch (DireStick)
+		{
+		case DIRESTICK_UP:
+			fStick = (float)g_djoykeyState[Controller].lY;
+			break;
+		case DIRESTICK_DOWN:
+			fStick = (float)g_djoykeyState[Controller].lY;
+			break;
+		case DIRESTICK_LEFT:
+			fStick = (float)g_djoykeyState[Controller].lX;
+			break;
+		case DIRESTICK_RIGHT:
+			fStick = (float)g_djoykeyState[Controller].lX;
+			break;
+		}
+		break;
+	case STICK_RIGHT:
+		switch (DireStick)
+		{
+		case DIRESTICK_UP:
+			fStick = (float)g_djoykeyState[Controller].lRz;
+			break;
+		case DIRESTICK_DOWN:
+			fStick = (float)g_djoykeyState[Controller].lRz;
+			break;
+		case DIRESTICK_LEFT:
+			fStick = (float)g_djoykeyState[Controller].lZ;
+			break;
+		case DIRESTICK_RIGHT:
+			fStick = (float)g_djoykeyState[Controller].lZ;
+			break;
+		}
+		break;
+	}
+
+	fStick /= STICK_NUM;
+	fStick += DSTICK_NUM;
+
+	switch (DireStick)
+	{
+	case DIRESTICK_UP:
+		if (bOldStick[Controller][Stick][DireStick] == true && fStick < -STICK_DED)
+		{
+			return true;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == false && fStick < -STICK_DED)
+		{
+			nStickTime[Controller][Stick][DireStick]++;
+
+			if (nStickTime[Controller][Stick][DireStick] >= REPEAT_TIME)
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				bOldStick[Controller][Stick][DireStick] = true;
+			}
+			return false;
+		}
+		else
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			nStickTime[Controller][Stick][DireStick] = 0;
+			return false;
+		}
+		break;
+	case DIRESTICK_DOWN:
+		if (bOldStick[Controller][Stick][DireStick] == true && fStick > STICK_DED)
+		{
+			return true;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == false && fStick > STICK_DED)
+		{
+			nStickTime[Controller][Stick][DireStick]++;
+
+			if (nStickTime[Controller][Stick][DireStick] >= REPEAT_TIME)
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				bOldStick[Controller][Stick][DireStick] = true;
+			}
+			return false;
+		}
+		else
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			nStickTime[Controller][Stick][DireStick] = 0;
+			return false;
+		}
+		break;
+	case DIRESTICK_LEFT:
+		if (bOldStick[Controller][Stick][DireStick] == true && fStick < -STICK_DED)
+		{
+			return true;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == false && fStick < -STICK_DED)
+		{
+			nStickTime[Controller][Stick][DireStick]++;
+
+			if (nStickTime[Controller][Stick][DireStick] >= REPEAT_TIME)
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				bOldStick[Controller][Stick][DireStick] = true;
+			}
+			return false;
+		}
+		else
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			nStickTime[Controller][Stick][DireStick] = 0;
+			return false;
+		}
+		break;
+	case DIRESTICK_RIGHT:
+		if (bOldStick[Controller][Stick][DireStick] == true && fStick > STICK_DED)
+		{
+			return true;
+		}
+		else if (bOldStick[Controller][Stick][DireStick] == false && fStick > STICK_DED)
+		{
+			nStickTime[Controller][Stick][DireStick]++;
+
+			if (nStickTime[Controller][Stick][DireStick] >= REPEAT_TIME)
+			{
+				nStickTime[Controller][Stick][DireStick] = 0;
+				bOldStick[Controller][Stick][DireStick] = true;
+			}
+			return false;
+		}
+		else
+		{
+			bOldStick[Controller][Stick][DireStick] = false;
+			nStickTime[Controller][Stick][DireStick] = 0;
+			return false;
+		}
+		break;
+	}
+	return false;
 }
 
 //----------------------
@@ -1982,11 +3395,10 @@ int ControllerNum(CONTYPE Contype)
 	{
 		return g_XcontrollerNum;
 	}
-	else if (Contype == CONTYPE_D)
+	else
 	{
 		return g_DcontrollerNum;
 	}
-	return g_XcontrollerNum + g_DcontrollerNum;
 }
 
 //---------------------------
@@ -1995,18 +3407,42 @@ int ControllerNum(CONTYPE Contype)
 BOOL CALLBACK EnumDevicesCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext)
 {
 	static int nControllerNum = 0;
+	static int XcontrollerNum = 0;
 
 	if (g_bUnCon)
 	{
 		nControllerNum = 0;
+		XcontrollerNum = 0;
 		g_bUnCon = false;
 	}
 
-	if (nControllerNum<=CONTROLLER_MAX)
+	if ((nControllerNum+XcontrollerNum)<=CONTROLLER_MAX)
 	{
-		//インプットデバイスの作成
-		if (SUCCEEDED(g_pinput->CreateDevice(pdidInstance->guidInstance, &g_DevdJoypad[nControllerNum], NULL)))
+		XINPUT_STATE state;
+		ZeroMemory(&state, sizeof(XINPUT_STATE));
+		if (XInputGetState(XcontrollerNum, &state) == ERROR_SUCCESS)
 		{
+			if (SUCCEEDED(g_pinput->CreateDevice(pdidInstance->guidInstance, &g_DevdJoypad[XcontrollerNum], NULL)))
+			{//インプットデバイスの作成
+				HINSTANCE hInstanse;
+				HWND hWnd;
+
+				hInstanse = GethInstanse();
+				hWnd = GethWnd();
+
+				//フォーマット作成
+				g_DevdJoypad[nControllerNum]->SetDataFormat(&c_dfDIJoystick);
+
+				g_DevdJoypad[nControllerNum]->SetCooperativeLevel(hWnd, (DISCL_FOREGROUND | DISCL_EXCLUSIVE));
+
+				g_DevdJoypad[nControllerNum]->Acquire();//アクセス権限の取得
+
+				strcpy(&g_ConName[nControllerNum][0], pdidInstance->tszProductName);
+				XcontrollerNum++;
+			}
+		}
+		else if (SUCCEEDED(g_pinput->CreateDevice(pdidInstance->guidInstance, &g_DevdJoypad[nControllerNum + XNum()], NULL)))
+		{//インプットデバイスの作成
 			HINSTANCE hInstanse;
 			HWND hWnd;
 
@@ -2014,19 +3450,36 @@ BOOL CALLBACK EnumDevicesCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pC
 			hWnd = GethWnd();
 
 			//フォーマット作成
-			g_DevdJoypad[nControllerNum]->SetDataFormat(&c_dfDIJoystick);
+			g_DevdJoypad[nControllerNum + XNum()]->SetDataFormat(&c_dfDIJoystick);
 
-			g_DevdJoypad[nControllerNum]->SetCooperativeLevel(hWnd, (DISCL_FOREGROUND | DISCL_EXCLUSIVE));
+			g_DevdJoypad[nControllerNum + XNum()]->SetCooperativeLevel(hWnd, (DISCL_FOREGROUND | DISCL_EXCLUSIVE));
 
-			g_DevdJoypad[nControllerNum]->Acquire();//アクセス権限の取得
+			g_DevdJoypad[nControllerNum + XNum()]->Acquire();//アクセス権限の取得
 
-			strcpy(&g_ConName[nControllerNum][0], pdidInstance->tszProductName);
-
+			strcpy(&g_ConName[nControllerNum + XNum()][0], pdidInstance->tszProductName);
 			nControllerNum++;
-			g_DcontrollerNum = nControllerNum;
 		}
 	}
+	g_DcontrollerNum = nControllerNum+XcontrollerNum;
 
 	// 列挙を続行
 	return DIENUM_CONTINUE;
+}
+
+//----------
+//
+//----------
+int XNum(void)
+{
+	int XNum = 0;
+	XINPUT_STATE state;
+	ZeroMemory(&state, sizeof(XINPUT_STATE));
+	for (int i = 0; i < CONTROLLER_MAX; i++)
+	{
+		if (XInputGetState(i, &state) == ERROR_SUCCESS)
+		{
+			XNum++;
+		}
+	}
+	return XNum;
 }

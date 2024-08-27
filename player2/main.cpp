@@ -191,7 +191,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		case VK_F5:
-			GetCursorIn()->bUse = !GetCursorIn()->bUse;
+			CrCursor(!GetCursorIn()->bUse);
 			break;
 		case VK_F11:
 			ToggleFullScreen(hWnd);

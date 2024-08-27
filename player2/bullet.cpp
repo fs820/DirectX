@@ -254,13 +254,13 @@ void UpdateBullet(void)
 			switch (g_aBullet[i].nType)
 			{
 			case 0:
-				col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+				col = D3DXCOLOR(0.8f, 0.0f, 0.0f, 0.2f);
 				break;
 			case 1:
-				col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+				col = D3DXCOLOR(0.0f, 0.8f, 0.0f, 0.2f);
 				break;
 			case 2:
-				col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+				col = D3DXCOLOR(0.0f, 0.0f, 0.8f, 0.2f);
 				break;
 			}
 
@@ -269,7 +269,7 @@ void UpdateBullet(void)
 			rot.y=0.0f;
 			rot.z = atan2f((float)rand(),(float)rand());
 
-			SetEffect(g_aBullet[i].pos,rot, col, g_aBullet[i].fLength / 10.0f, 100,i);
+			SetEffect(g_aBullet[i].pos,rot, col, g_aBullet[i].fLength/5.0f, 100,i);
 		}
 	}
 }

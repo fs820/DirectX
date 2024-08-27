@@ -10,7 +10,7 @@
 
 #include"main.h"
 
-#define MAX_EFFECT (4096)//Å‘å”
+#define MAX_EFFECT (8192)//Å‘å”
 #define EFFECT_LIFE (100)
 
 void InitEffect(void);//’e‚Ì‰Šú‰»ˆ—

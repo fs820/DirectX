@@ -207,26 +207,25 @@ void DrawCursor(void)
     //デバイスの取得
 	pDevice = GetDevice();
 
-	if (true)
+	if (g_Cursor.bUse)
 	{
+		//頂点バッファ
+		pDevice->SetStreamSource(0, g_pVtxBuffCursor, 0, sizeof(VERTEX_2D));
 
+		//頂点フォーマットの設定
+		pDevice->SetFVF(FVF_VERTEX_2D);
+
+		//テクスチャの設定
+		pDevice->SetTexture(0, g_pTextureCursor);
+
+		//プレイヤーの描画
+		pDevice->DrawPrimitive
+		(
+			D3DPT_TRIANGLESTRIP,//タイプ
+			0,//始まりの番号
+			2//ポリゴンの個数
+		);
 	}
-	//頂点バッファ
-	pDevice->SetStreamSource(0, g_pVtxBuffCursor, 0, sizeof(VERTEX_2D));
-
-	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_2D);
-
-	//テクスチャの設定
-	pDevice->SetTexture(0, g_pTextureCursor);
-
-	//プレイヤーの描画
-	pDevice->DrawPrimitive
-	(
-		D3DPT_TRIANGLESTRIP,//タイプ
-		0,//始まりの番号
-		2//ポリゴンの個数
-	);
 }
 
 //-------------------
@@ -243,4 +242,12 @@ PDIRECT3DVERTEXBUFFER9 GetCursorBuffer(void)
 CURSOR* GetCursorIn(void)
 {
 	return &g_Cursor;
+}
+
+//----
+//使用
+//----
+void CrCursor(bool bUse)
+{
+	g_Cursor.bUse = bUse;
 }

@@ -44,5 +44,6 @@ void UpdateCursor(void);//ポリゴンの更新処理
 void DrawCursor(void);//ポリゴンの描画処理
 PDIRECT3DVERTEXBUFFER9 GetCursorBuffer(void);//プレイヤーバッファの取得
 CURSOR* GetCursorIn(void);
+void CrCursor(bool bUse);
 
 #endif _CURSOR_H_

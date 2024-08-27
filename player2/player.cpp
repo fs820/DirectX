@@ -133,31 +133,31 @@ void UpdatePlayer(void)
 	//移動処理
 
 	//X
-	if(IsXInputControllerConnected())
+	if(IsXInputControllerConnected(CONTROLLER_1))
 	{
 		//左スティック処理
-		pStick = GetJoyStick(STICK_LEFT);
+		pStick = GetJoyStick(STICK_LEFT, CONTROLLER_1);
 		g_Player.move.x += *pStick * PLAYER_SPEED_X;
 		g_Player.move.y += -*(pStick + 1) * PLAYER_SPEED_Y;
 
 		//右スティック処理
-		pStick = GetJoyStick(STICK_RIGHT);
+		pStick = GetJoyStick(STICK_RIGHT, CONTROLLER_1);
 		if (*pStick > STICK_DED || *(pStick + 1) > STICK_DED || *pStick < -STICK_DED || *(pStick + 1) < -STICK_DED)
 		{
 			g_Player.rot.z = atan2f(*(pStick + 1), *pStick);
 		}
 	}
 	//d
-	else if (IsDirectInputControllerConnected())
+	else if (IsDirectInputControllerConnected(CONTROLLER_1))
 	{
 
 		//左スティック処理
-		pStick = GetdJoyStick(STICK_LEFT);
+		pStick = GetdJoyStick(STICK_LEFT, CONTROLLER_1);
 		g_Player.move.x += *pStick * PLAYER_SPEED_X;
 		g_Player.move.y += *(pStick + 1) * PLAYER_SPEED_Y;
 
 		//右スティック処理
-		pStick = GetdJoyStick(STICK_RIGHT);
+		pStick = GetdJoyStick(STICK_RIGHT, CONTROLLER_1);
 		if (*pStick > STICK_DED || *(pStick + 1) > STICK_DED || *pStick < -STICK_DED || *(pStick + 1) < -STICK_DED)
 		{
 			g_Player.rot.z = -atan2f(*(pStick + 1), *pStick);
@@ -172,14 +172,14 @@ void UpdatePlayer(void)
 	fMouseWheel = GetMouseWheel();
 	g_Player.rot.z += fMouseWheel;
 
-	if (GetKeyboradPress(DIK_A) == true || GetJoykeyPress(JOYKEY_LEFT) == true)//Aキー
+	if (GetKeyboradPress(DIK_A) == true || GetJoykeyPress(JOYKEY_LEFT, CONTROLLER_1) == true)//Aキー
 	{
-		if (GetKeyboradPress(DIK_W) == true || GetJoykeyPress(JOYKEY_UP) == true)//Wキー
+		if (GetKeyboradPress(DIK_W) == true || GetJoykeyPress(JOYKEY_UP, CONTROLLER_1) == true)//Wキー
 		{//左上
 			g_Player.move.x += sinf(D3DX_PI * -0.75f) * PLAYER_SPEED_X;
 			g_Player.move.y += cosf(D3DX_PI * -0.75f) * PLAYER_SPEED_Y;
 		}
-		else if (GetKeyboradPress(DIK_S) == true || GetJoykeyPress(JOYKEY_DOWN) == true)//Sキー
+		else if (GetKeyboradPress(DIK_S) == true || GetJoykeyPress(JOYKEY_DOWN, CONTROLLER_1) == true)//Sキー
 		{//左下
 			g_Player.move.x += sinf(D3DX_PI * -0.25f) * PLAYER_SPEED_X;
 			g_Player.move.y += cosf(D3DX_PI * -0.25f) * PLAYER_SPEED_Y;
@@ -189,14 +189,14 @@ void UpdatePlayer(void)
 			g_Player.move.x += -PLAYER_SPEED_X;
 		}
 	}
-	else if (GetKeyboradPress(DIK_D) == true || GetJoykeyPress(JOYKEY_RIGHT) == true)//Dキー
+	else if (GetKeyboradPress(DIK_D) == true || GetJoykeyPress(JOYKEY_RIGHT, CONTROLLER_1) == true)//Dキー
 	{
-		if (GetKeyboradPress(DIK_W) == true || GetJoykeyPress(JOYKEY_UP) == true)//Wキー
+		if (GetKeyboradPress(DIK_W) == true || GetJoykeyPress(JOYKEY_UP, CONTROLLER_1) == true)//Wキー
 		{//右上
 			g_Player.move.x += sinf(D3DX_PI * 0.75f) * PLAYER_SPEED_X;
 			g_Player.move.y += cosf(D3DX_PI * 0.75f) * PLAYER_SPEED_Y;
 		}
-		else if (GetKeyboradPress(DIK_S) == true || GetJoykeyPress(JOYKEY_DOWN) == true)//Sキー
+		else if (GetKeyboradPress(DIK_S) == true || GetJoykeyPress(JOYKEY_DOWN, CONTROLLER_1) == true)//Sキー
 		{//右下
 			g_Player.move.x += sinf(D3DX_PI * 0.25f) * PLAYER_SPEED_X;
 			g_Player.move.y += cosf(D3DX_PI * 0.25f) * PLAYER_SPEED_Y;
@@ -206,31 +206,31 @@ void UpdatePlayer(void)
 			g_Player.move.x += PLAYER_SPEED_X;
 		}
 	}
-	else if (GetKeyboradPress(DIK_W) == true || GetJoykeyPress(JOYKEY_UP) == true)//Wキー
+	else if (GetKeyboradPress(DIK_W) == true || GetJoykeyPress(JOYKEY_UP, CONTROLLER_1) == true)//Wキー
 	{//上
 		g_Player.move.y += -PLAYER_SPEED_Y;
 	}
-	else if (GetKeyboradPress(DIK_S) == true || GetJoykeyPress(JOYKEY_DOWN) == true)//Sキー
+	else if (GetKeyboradPress(DIK_S) == true || GetJoykeyPress(JOYKEY_DOWN, CONTROLLER_1) == true)//Sキー
 	{//下
 		g_Player.move.y += PLAYER_SPEED_Y;
 	}
 
-	if (GetKeyboradPress(DIK_Q) == true || GetJoykeyPress(JOYKEY_LB) == true)
+	if (GetKeyboradPress(DIK_Q) == true || GetJoykeyPress(JOYKEY_LB, CONTROLLER_1) == true)
 	{
 		g_Player.rot.z += PLAYER_ROT_SPEED;
 	}
 
-	if (GetKeyboradPress(DIK_E) == true || GetJoykeyPress(JOYKEY_RB) == true)
+	if (GetKeyboradPress(DIK_E) == true || GetJoykeyPress(JOYKEY_RB, CONTROLLER_1) == true)
 	{
 		g_Player.rot.z += -PLAYER_ROT_SPEED;
 	}
 
-	if (GetKeyboradTrigger(DIK_R) == true || GetJoykeyTrigger(JOYKEY_L3) == true)
+	if (GetKeyboradTrigger(DIK_R) == true || GetJoykeyTrigger(JOYKEY_L3, CONTROLLER_1) == true)
 	{
 		g_Player.rot = g_Player.rotDef;
 	}
 
-	if (GetKeyboradPress(DIK_Z) == true ||  GetMousePress(MOUSE_B1) == true || GetJoykeyPress(JOYKEY_LT) == true)
+	if (GetKeyboradPress(DIK_Z) == true ||  GetMousePress(MOUSE_B1) == true || GetJoykeyPress(JOYKEY_LT, CONTROLLER_1) == true)
 	{
 		if (g_Player.fLength >= 0.0f && g_Player.fLength <= PLAYER_SIZE_MAX)
 		{
@@ -238,7 +238,7 @@ void UpdatePlayer(void)
 		}
 	}
 
-	if (GetKeyboradPress(DIK_C) == true|| GetMousePress(MOUSE_B2) == true || GetJoykeyPress(JOYKEY_RT) == true)
+	if (GetKeyboradPress(DIK_C) == true|| GetMousePress(MOUSE_B2) == true || GetJoykeyPress(JOYKEY_RT, CONTROLLER_1) == true)
 	{
 		if (g_Player.fLength >= PLAYER_SIZE_MIN)
 		{
@@ -246,12 +246,12 @@ void UpdatePlayer(void)
 		}
 	}
 
-	if (GetKeyboradTrigger(DIK_V) == true || GetJoykeyTrigger(JOYKEY_R3) == true)
+	if (GetKeyboradTrigger(DIK_V) == true || GetJoykeyTrigger(JOYKEY_R3, CONTROLLER_1) == true)
 	{
 		g_Player.fLength = g_Player.fLengthDef;
 	}
 
-	if (GetKeyboradTrigger(DIK_SPACE) == true || GetMouseTrigger(MOUSE_LEFT) == true|| GetJoykeyTrigger(JOYKEY_A) == true)
+	if (GetKeyboradTrigger(DIK_SPACE) == true || GetMouseTrigger(MOUSE_LEFT) == true|| GetJoykeyTrigger(JOYKEY_A, CONTROLLER_1) == true)
 	{
 		g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 		g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
@@ -259,101 +259,82 @@ void UpdatePlayer(void)
 		//弾の設定
 		SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
 	}
-	else if (GetKeyboradRelease(DIK_B) == true ||  GetMouseRelease(MOUSE_RIGHT) == true|| GetJoykeyRelease(JOYKEY_B) == true)
+	else if (GetKeyboradRelease(DIK_B) == true ||  GetMouseRelease(MOUSE_RIGHT) == true|| GetJoykeyRelease(JOYKEY_B, CONTROLLER_1) == true)
 	{
 		//弾の設定
 		Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
 	}
-	else if (GetKeyboradRepeat(DIK_F) == true ||  GetMouseRepeat(MOUSE_SENTER) == true|| GetJoykeyRepeat(JOYKEY_X) == true)
+	else if (GetKeyboradRepeat(DIK_F) == true ||  GetMouseRepeat(MOUSE_SENTER) == true|| GetJoykeyRepeat(JOYKEY_X, CONTROLLER_1) == true)
 	{
 		//弾の設定
 		SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
 	}
 
-	if (GetKeyboradTrigger(DIK_0) == true || GetJoykeyTrigger(JOYKEY_Y) == true)
+	if (GetKeyboradTrigger(DIK_0) == true || GetJoykeyTrigger(JOYKEY_Y, CONTROLLER_1) == true)
 	{
 		SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
 		g_Player.nLife = 0;
 		g_Player.state = PLAYERSTATE_DIE;
 	}
 
-	for (int i = 0; i < ControllerNum(CONTYPE_D); i++)
+	if (IsDirectInputControllerConnected(CONTROLLER_1))
 	{
-		if (!strcmp(ControllerName((CONTROLLER)i), ELE_CON))
-		{
-
-		}
-		else if (!strcmp(ControllerName((CONTROLLER)i), PS_CON))
-		{
-
-		}
-		else if (!strcmp(ControllerName((CONTROLLER)i), NIN_CON))
-		{
-
-		}
-		else if (!IsXInputControllerConnected((CONTROLLER)i) && IsDirectInputControllerConnected((CONTROLLER)i))
-		{
-
-		}
-	}
-
-
-	//dinput
-	if (!IsXInputControllerConnected() && IsDirectInputControllerConnected())
-	{
-		if (GetdJoyPov(POV_UP, 0) == true)
+		if (GetdJoyPov(POV_UP, 0, CONTROLLER_1) == true)
 		{
 			g_Player.move.y += -PLAYER_SPEED_Y;
 		}
-		else if (GetdJoyPov(POV_RIGHTUP, 0) == true)
+		else if (GetdJoyPov(POV_RIGHTUP, 0, CONTROLLER_1) == true)
 		{
 			g_Player.move.x += sinf(D3DX_PI * 0.75f) * PLAYER_SPEED_X;
 			g_Player.move.y += cosf(D3DX_PI * 0.75f) * PLAYER_SPEED_Y;
 		}
-		else if (GetdJoyPov(POV_RIGHT, 0) == true)
+		else if (GetdJoyPov(POV_RIGHT, 0, CONTROLLER_1) == true)
 		{
 			g_Player.move.x += PLAYER_SPEED_X;
 		}
-		else if (GetdJoyPov(POV_RIGHTDOWN, 0) == true)
+		else if (GetdJoyPov(POV_RIGHTDOWN, 0, CONTROLLER_1) == true)
 		{
 			g_Player.move.x += sinf(D3DX_PI * 0.25f) * PLAYER_SPEED_X;
 			g_Player.move.y += cosf(D3DX_PI * 0.25f) * PLAYER_SPEED_Y;
 		}
-		else if (GetdJoyPov(POV_DOWN, 0) == true)
+		else if (GetdJoyPov(POV_DOWN, 0, CONTROLLER_1) == true)
 		{
 			g_Player.move.y += PLAYER_SPEED_Y;
 		}
-		else if (GetdJoyPov(POV_LEFTDOWN, 0) == true)
+		else if (GetdJoyPov(POV_LEFTDOWN, 0, CONTROLLER_1) == true)
 		{
 			g_Player.move.x += sinf(D3DX_PI * -0.25f) * PLAYER_SPEED_X;
 			g_Player.move.y += cosf(D3DX_PI * -0.25f) * PLAYER_SPEED_Y;
 		}
-		else if (GetdJoyPov(POV_LEFT, 0) == true)
+		else if (GetdJoyPov(POV_LEFT, 0, CONTROLLER_1) == true)
 		{
 			g_Player.move.x += -PLAYER_SPEED_X;
 		}
-		else if (GetdJoyPov(POV_LEFTUP, 0) == true)
+		else if (GetdJoyPov(POV_LEFTUP, 0, CONTROLLER_1) == true)
 		{
 			g_Player.move.x += sinf(D3DX_PI * -0.75f) * PLAYER_SPEED_X;
 			g_Player.move.y += cosf(D3DX_PI * -0.75f) * PLAYER_SPEED_Y;
 		}
+	}
 
-		if (GetdJoykeyPress(4) == true)
+	if (!strcmp(ControllerName(CONTROLLER_1), ELE_CON))
+	{
+		if (GetdJoykeyPress(ELEKEY_LB, CONTROLLER_1) == true)
 		{
 			g_Player.rot.z += PLAYER_ROT_SPEED;
 		}
 
-		if (GetdJoykeyPress(5) == true)
+		if (GetdJoykeyPress(ELEKEY_RB, CONTROLLER_1) == true)
 		{
 			g_Player.rot.z += -PLAYER_ROT_SPEED;
 		}
 
-		if (GetdJoykeyTrigger(8) == true)
+		if (GetdJoykeyTrigger(ELEKEY_L3, CONTROLLER_1) == true)
 		{
 			g_Player.rot = g_Player.rotDef;
 		}
 
-		if (GetdJoykeyPress(6) == true)
+		if (GetdJoykeyPress(ELEKEY_LT, CONTROLLER_1) == true)
 		{
 			if (g_Player.fLength >= 0.0f && g_Player.fLength <= PLAYER_SIZE_MAX)
 			{
@@ -361,7 +342,7 @@ void UpdatePlayer(void)
 			}
 		}
 
-		if (GetdJoykeyPress(7) == true)
+		if (GetdJoykeyPress(ELEKEY_RT, CONTROLLER_1) == true)
 		{
 			if (g_Player.fLength >= PLAYER_SIZE_MIN)
 			{
@@ -369,12 +350,12 @@ void UpdatePlayer(void)
 			}
 		}
 
-		if (GetdJoykeyTrigger(9) == true)
+		if (GetdJoykeyTrigger(ELEKEY_R3, CONTROLLER_1) == true)
 		{
 			g_Player.fLength = g_Player.fLengthDef;
 		}
 
-		if (GetdJoykeyTrigger(0) == true)
+		if (GetdJoykeyTrigger(ELEKEY_A, CONTROLLER_1) == true)
 		{
 			g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 			g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
@@ -382,24 +363,217 @@ void UpdatePlayer(void)
 			//弾の設定
 			SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
 		}
-		else if (GetdJoykeyRelease(1) == true)
+		else if (GetdJoykeyRelease(ELEKEY_B, CONTROLLER_1) == true)
 		{
 			//弾の設定
 			Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
 		}
-		else if (GetdJoykeyRepeat(2) == true)
+		else if (GetdJoykeyRepeat(ELEKEY_X, CONTROLLER_1) == true)
 		{
 			//弾の設定
 			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
 		}
 
-		if (GetdJoykeyTrigger(3)==true)
+		if (GetdJoykeyTrigger(ELEKEY_Y, CONTROLLER_1) == true)
 		{
 			SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
 			g_Player.nLife = 0;
 			g_Player.state = PLAYERSTATE_DIE;
 		}
 	}
+	else if (!strcmp(ControllerName(CONTROLLER_1), PS_CON))
+	{
+		if (GetdJoykeyPress(PSKEY_LB, CONTROLLER_1) == true)
+		{
+			g_Player.rot.z += PLAYER_ROT_SPEED;
+		}
+
+		if (GetdJoykeyPress(PSKEY_RB, CONTROLLER_1) == true)
+		{
+			g_Player.rot.z += -PLAYER_ROT_SPEED;
+		}
+
+		if (GetdJoykeyTrigger(PSKEY_L3, CONTROLLER_1) == true)
+		{
+			g_Player.rot = g_Player.rotDef;
+		}
+
+		if (GetdJoykeyPress(PSKEY_LT, CONTROLLER_1) == true)
+		{
+			if (g_Player.fLength >= 0.0f && g_Player.fLength <= PLAYER_SIZE_MAX)
+			{
+				g_Player.fLength += PLAYER_SIZE_SPEED;
+			}
+		}
+
+		if (GetdJoykeyPress(PSKEY_RT, CONTROLLER_1) == true)
+		{
+			if (g_Player.fLength >= PLAYER_SIZE_MIN)
+			{
+				g_Player.fLength += -PLAYER_SIZE_SPEED;
+			}
+		}
+
+		if (GetdJoykeyTrigger(PSKEY_R3, CONTROLLER_1) == true)
+		{
+			g_Player.fLength = g_Player.fLengthDef;
+		}
+
+		if (GetdJoykeyTrigger(PSKEY_CI, CONTROLLER_1) == true)
+		{
+			g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+			g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+
+			//弾の設定
+			SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+		}
+		else if (GetdJoykeyRelease(PSKEY_CR, CONTROLLER_1) == true)
+		{
+			//弾の設定
+			Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+		}
+		else if (GetdJoykeyRepeat(PSKEY_TRA, CONTROLLER_1) == true)
+		{
+			//弾の設定
+			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+		}
+
+		if (GetdJoykeyTrigger(PSKEY_SQ, CONTROLLER_1) == true)
+		{
+			SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
+			g_Player.nLife = 0;
+			g_Player.state = PLAYERSTATE_DIE;
+		}
+	}
+	else if (!strcmp(ControllerName(CONTROLLER_1), NIN_CON))
+	{
+	    if (GetdJoykeyPress(NINKEY_LB, CONTROLLER_1) == true)
+	    {
+			g_Player.rot.z += PLAYER_ROT_SPEED;
+		}
+
+	    if (GetdJoykeyPress(NINKEY_RB, CONTROLLER_1) == true)
+	    {
+			g_Player.rot.z += -PLAYER_ROT_SPEED;
+		}
+
+	    if (GetdJoykeyTrigger(NINKEY_L3, CONTROLLER_1) == true)
+	    {
+			g_Player.rot = g_Player.rotDef;
+		}
+
+	    if (GetdJoykeyPress(NINKEY_LT, CONTROLLER_1) == true)
+	    {
+			if (g_Player.fLength >= 0.0f && g_Player.fLength <= PLAYER_SIZE_MAX)
+			{
+				g_Player.fLength += PLAYER_SIZE_SPEED;
+			}
+		}
+
+	    if (GetdJoykeyPress(NINKEY_RT, CONTROLLER_1) == true)
+	    {
+			if (g_Player.fLength >= PLAYER_SIZE_MIN)
+			{
+				g_Player.fLength += -PLAYER_SIZE_SPEED;
+			}
+		}
+
+	    if (GetdJoykeyTrigger(NINKEY_R3, CONTROLLER_1) == true)
+	    {
+			g_Player.fLength = g_Player.fLengthDef;
+		}
+
+	    if (GetdJoykeyTrigger(NINKEY_A, CONTROLLER_1) == true)
+	    {
+			g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+			g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+
+			//弾の設定
+			SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+		}
+	    else if (GetdJoykeyRelease(NINKEY_B, CONTROLLER_1) == true)
+	    {
+			//弾の設定
+			Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+		}
+	    else if (GetdJoykeyRepeat(NINKEY_X, CONTROLLER_1) == true)
+	    {
+			//弾の設定
+			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+		}
+
+	    if (GetdJoykeyTrigger(NINKEY_Y, CONTROLLER_1) == true)
+	    {
+			SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
+			g_Player.nLife = 0;
+			g_Player.state = PLAYERSTATE_DIE;
+		}
+    }
+	else if (!IsXInputControllerConnected(CONTROLLER_1) && IsDirectInputControllerConnected(CONTROLLER_1))
+	{
+		if (GetdJoykeyPress(DKEY_LB, CONTROLLER_1) == true)
+		{
+			g_Player.rot.z += PLAYER_ROT_SPEED;
+		}
+
+		if (GetdJoykeyPress(DKEY_RB, CONTROLLER_1) == true)
+		{
+			g_Player.rot.z += -PLAYER_ROT_SPEED;
+		}
+
+		if (GetdJoykeyTrigger(DKEY_L3, CONTROLLER_1) == true)
+		{
+			g_Player.rot = g_Player.rotDef;
+		}
+
+		if (GetdJoykeyPress(DKEY_LT, CONTROLLER_1) == true)
+		{
+			if (g_Player.fLength >= 0.0f && g_Player.fLength <= PLAYER_SIZE_MAX)
+			{
+				g_Player.fLength += PLAYER_SIZE_SPEED;
+			}
+		}
+
+		if (GetdJoykeyPress(DKEY_RT, CONTROLLER_1) == true)
+		{
+			if (g_Player.fLength >= PLAYER_SIZE_MIN)
+			{
+				g_Player.fLength += -PLAYER_SIZE_SPEED;
+			}
+		}
+
+		if (GetdJoykeyTrigger(DKEY_R3, CONTROLLER_1) == true)
+		{
+			g_Player.fLength = g_Player.fLengthDef;
+		}
+
+		if (GetdJoykeyTrigger(DKEY_A, CONTROLLER_1) == true)
+		{
+			g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+			g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+
+			//弾の設定
+			SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+		}
+		else if (GetdJoykeyRelease(DKEY_B, CONTROLLER_1) == true)
+		{
+			//弾の設定
+			Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+		}
+		else if (GetdJoykeyRepeat(DKEY_X, CONTROLLER_1) == true)
+		{
+			//弾の設定
+			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+		}
+
+		if (GetdJoykeyTrigger(DKEY_Y, CONTROLLER_1) == true)
+		{
+			SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
+			g_Player.nLife = 0;
+			g_Player.state = PLAYERSTATE_DIE;
+		}
+	}
+
 
 	//位置の更新
 	g_Player.pos.x += g_Player.move.x;
@@ -459,14 +633,14 @@ void UpdatePlayer(void)
 		{
 		case PLAYERSTATE_APPEAR:
 			g_Player.nCounterState++;
-			if (g_Player.nCounterState<=180)
+			if (g_Player.nCounterState>=60)
 			{
 				g_Player.state = PLAYERSTATE_NORMAL;
-				g_Player.pos = D3DXVECTOR3(PLAYER_WIDTH, SCREEN_HEIGHT / 2, 0);//初期位置
 				g_Player.fLength = g_Player.fLengthDef;
 				g_Player.rot = g_Player.rotDef;
+				g_Player.bDisp = true;
 			}
-			else if (g_Player.nCounterState%30==0)
+			else if (g_Player.nCounterState%5==0)
 			{
 				g_Player.bDisp = !g_Player.bDisp;
 			}
@@ -528,7 +702,7 @@ void DrawPlayer(void)
 //-------------------
 void HitPlayer(int nDamage)
 {
-	if (g_Player.state!=PLAYERSTATE_DIE|| g_Player.state != PLAYERSTATE_APPEAR)
+	if (g_Player.state!=PLAYERSTATE_DIE&& g_Player.state != PLAYERSTATE_APPEAR)
 	{
 		VERTEX_2D* pVtx;
 
@@ -550,6 +724,7 @@ void HitPlayer(int nDamage)
 				g_Player.nCounterState = 0;
 				g_Player.nRema--;
 				g_Player.nLife = 100;
+				g_Player.pos = D3DXVECTOR3(PLAYER_WIDTH, SCREEN_HEIGHT / 2, 0);//初期位置
 			}
 		}
 		else

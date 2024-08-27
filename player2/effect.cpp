@@ -142,10 +142,11 @@ void UpdateEffect(void)
 			pVtx[2].pos = D3DXVECTOR3(g_aEffect[i].pos.x - g_aEffect[i].fRadius, g_aEffect[i].pos.y + g_aEffect[i].fRadius, 0.0f);
 			pVtx[3].pos = D3DXVECTOR3(g_aEffect[i].pos.x + g_aEffect[i].fRadius, g_aEffect[i].pos.y + g_aEffect[i].fRadius, 0.0f);
 
-			pVtx[0].col.a = ((float)g_aEffect[i].nLife)/((float)EFFECT_LIFE);
-			pVtx[1].col.a = ((float)g_aEffect[i].nLife) / ((float)EFFECT_LIFE);
-			pVtx[2].col.a = ((float)g_aEffect[i].nLife) / ((float)EFFECT_LIFE);
-			pVtx[3].col.a = ((float)g_aEffect[i].nLife) / ((float)EFFECT_LIFE);
+			BYTE alpha = (BYTE)(((float)g_aEffect[i].nLife) / ((float)EFFECT_LIFE) * 255.0f);
+			pVtx[0].col = (pVtx[0].col & 0x00FFFFFF) | (alpha << 24);
+			pVtx[1].col = (pVtx[1].col & 0x00FFFFFF) | (alpha << 24);
+			pVtx[2].col = (pVtx[2].col & 0x00FFFFFF) | (alpha << 24);
+			pVtx[3].col = (pVtx[3].col & 0x00FFFFFF) | (alpha << 24);
 
 			g_pVtxBuffEffect->Unlock();//バッファのアンロック
 
@@ -200,6 +201,11 @@ void DrawEffect(void)
 
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DRS_DESTBLENDALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);//カリング
+	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);//透明度
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 }
 

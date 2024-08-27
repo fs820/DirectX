@@ -121,7 +121,7 @@ void UpdateDemo(void)
 			SetFade(MODE_TITLE);
 		}
 	}
-	else if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START) == true||GetMouseTrigger(MOUSE_LEFT)==true||GetdJoykeyTrigger(11)==true)
+	else if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START,CONTROLLER_MAX) == true||GetMouseTrigger(MOUSE_LEFT)==true)
 	{
 		DemoEndCnt = 0;
 		FADE fade;
@@ -134,6 +134,75 @@ void UpdateDemo(void)
 			SetFade(MODE_TITLE);
 		}
 	}
+
+	for (int i = 0; i < ControllerNum(CONTYPE_D); i++)
+	{
+		if (!strcmp(ControllerName((CONTROLLER)i), ELE_CON))
+		{
+			if (GetdJoykeyTrigger(ELEKEY_START, (CONTROLLER)i))
+			{
+				DemoEndCnt = 0;
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					//サウンド
+					StopSound();
+					//切替
+					SetFade(MODE_TITLE);
+				}
+			}
+		}
+		else if (!strcmp(ControllerName((CONTROLLER)i), PS_CON))
+		{
+			if (GetdJoykeyTrigger(PSKEY_START, (CONTROLLER)i))
+			{
+				DemoEndCnt = 0;
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					//サウンド
+					StopSound();
+					//切替
+					SetFade(MODE_TITLE);
+				}
+			}
+		}
+		else if (!strcmp(ControllerName((CONTROLLER)i), NIN_CON))
+		{
+			if (GetdJoykeyTrigger(NINKEY_＋, (CONTROLLER)i))
+			{
+				DemoEndCnt = 0;
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					//サウンド
+					StopSound();
+					//切替
+					SetFade(MODE_TITLE);
+				}
+			}
+		}
+		else if (!IsXInputControllerConnected((CONTROLLER)i) && IsDirectInputControllerConnected((CONTROLLER)i))
+		{
+			if (GetdJoykeyTrigger(DKEY_START, (CONTROLLER)i))
+			{
+				DemoEndCnt = 0;
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					//サウンド
+					StopSound();
+					//切替
+					SetFade(MODE_TITLE);
+				}
+			}
+		}
+	}
+
 }
 
 //--------------------

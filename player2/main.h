@@ -76,7 +76,7 @@ typedef struct
 {
 	D3DXVECTOR3 pos; // 座標
 	float rhw; // 座標変換係数(1.0f)
-	D3DXCOLOR col; // カラー
+	D3DCOLOR col; // カラー
 	D3DXVECTOR2 tex; // テクスチャ座標
 } VERTEX_2D;
 

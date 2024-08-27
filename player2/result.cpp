@@ -156,7 +156,7 @@ void UninitResult(void)
 //--------------
 void UpdateResult(void)
 {
-	if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START) == true||GetMouseTrigger(MOUSE_LEFT)==true)
+	if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START,CONTROLLER_MAX) == true||GetMouseTrigger(MOUSE_LEFT)==true)
 	{
 		FADE fade;
 		fade = GetFade();
@@ -173,35 +173,62 @@ void UpdateResult(void)
 	{
 		if (!strcmp(ControllerName((CONTROLLER)i), ELE_CON))
 		{
-
+			if (GetdJoykeyTrigger(ELEKEY_START, (CONTROLLER)i))
+			{
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					//サウンド
+					StopSound();
+					//切替
+					SetFade(MODE_RANK);
+				}
+			}
 		}
 		else if (!strcmp(ControllerName((CONTROLLER)i), PS_CON))
 		{
-
+			if (GetdJoykeyTrigger(PSKEY_START, (CONTROLLER)i))
+			{
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					//サウンド
+					StopSound();
+					//切替
+					SetFade(MODE_RANK);
+				}
+			}
 		}
 		else if (!strcmp(ControllerName((CONTROLLER)i), NIN_CON))
 		{
-
+			if (GetdJoykeyTrigger(NINKEY_＋, (CONTROLLER)i))
+			{
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					//サウンド
+					StopSound();
+					//切替
+					SetFade(MODE_RANK);
+				}
+			}
 		}
 		else if (!IsXInputControllerConnected((CONTROLLER)i) && IsDirectInputControllerConnected((CONTROLLER)i))
 		{
-
-		}
-	}
-
-
-	if (!IsXInputControllerConnected()&&IsDirectInputControllerConnected())
-	{
-		if (GetdJoykeyTrigger(11) == true)
-		{
-			FADE fade;
-			fade = GetFade();
-			if (fade == FADE_NONE)
+			if (GetdJoykeyTrigger(DKEY_START, (CONTROLLER)i))
 			{
-				//サウンド
-				StopSound();
-				//切替
-				SetFade(MODE_RANK);
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					//サウンド
+					StopSound();
+					//切替
+					SetFade(MODE_RANK);
+				}
 			}
 		}
 	}

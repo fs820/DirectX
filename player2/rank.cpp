@@ -264,7 +264,7 @@ void UpdateRank(void)
 	static SELECT SelectNew = SELECT_BACK;
 	if (g_RankState==RANKSTATE_NORMAL)
 	{
-		if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START) == true||GetMouseTrigger(MOUSE_LEFT)==true)
+		if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START,CONTROLLER_MAX) == true||GetMouseTrigger(MOUSE_LEFT)==true)
 		{
 			FADE fade;
 			fade = GetFade();
@@ -290,13 +290,11 @@ void UpdateRank(void)
 	}
 	else
 	{
-		static bool bStick = false;
-
-		if (GetKeyboradTrigger(DIK_BACK) == true || GetJoykeyTrigger(JOYKEY_B) == true||GetMouseTrigger(MOUSE_RIGHT) == true)
+		if (GetKeyboradTrigger(DIK_BACK) == true || GetJoykeyTrigger(JOYKEY_B, CONTROLLER_MAX) == true||GetMouseTrigger(MOUSE_RIGHT) == true)
 		{
 			g_RankState = RANKSTATE_NORMAL;
 		}
-		else if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_A) == true || GetMouseTrigger(MOUSE_SENTER) == true)
+		else if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_A, CONTROLLER_MAX) == true || GetMouseTrigger(MOUSE_SENTER) == true)
 		{
 			FADE fade;
 			switch (SelectNew)
@@ -392,98 +390,86 @@ void UpdateRank(void)
 
 			g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
 		}
-		else if (bStick==false)
+		if (GetKeyboradTrigger(DIK_UP) == true || GetKeyboradTrigger(DIK_W) == true || GetJoykeyTrigger(JOYKEY_UP, CONTROLLER_MAX) == true || JoyStickTrigger(DIRESTICK_UP,STICK_LEFT,CONTROLLER_MAX) || GetMouseWheel() > 0.0f)
 		{
-			if (GetKeyboradTrigger(DIK_UP) == true || GetKeyboradTrigger(DIK_W) == true || GetJoykeyTrigger(JOYKEY_UP) == true|| *(GetJoyStick(STICK_LEFT) + 1) > STICK_DED||GetMouseWheel()>0.0f)
+			VERTEX_2D* pVtx;//頂点情報ポインタ
+
+			g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+			pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+			//カラー
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+			g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+			switch (SelectNew)
 			{
-				VERTEX_2D* pVtx;//頂点情報ポインタ
-
-				g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-				pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
-
-				//カラー
-				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-				g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
-
-				switch (SelectNew)
-				{
-				case SELECT_BACK:
-					SelectNew = SELECT_EXIT;
-					break;
-				case SELECT_RETRY:
-					SelectNew = SELECT_BACK;
-					break;
-				case SELECT_EXIT:
-					SelectNew = SELECT_RETRY;
-					break;
-				}
-
-				g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-				pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
-
-				//カラー
-				pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-				pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-				pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-				pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-
-				g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+			case SELECT_BACK:
+				SelectNew = SELECT_EXIT;
+				break;
+			case SELECT_RETRY:
+				SelectNew = SELECT_BACK;
+				break;
+			case SELECT_EXIT:
+				SelectNew = SELECT_RETRY;
+				break;
 			}
-			else if (GetKeyboradTrigger(DIK_DOWN) == true || GetKeyboradTrigger(DIK_S) == true || GetJoykeyTrigger(JOYKEY_DOWN) == true || *(GetJoyStick(STICK_LEFT) + 1) < -STICK_DED || GetMouseWheel() < 0.0f)
+
+			g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+			pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+			//カラー
+			pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+			pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+			pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+			pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+			g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+		}
+		else if (GetKeyboradTrigger(DIK_DOWN) == true || GetKeyboradTrigger(DIK_S) == true || GetJoykeyTrigger(JOYKEY_DOWN, CONTROLLER_MAX) == true || JoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, CONTROLLER_MAX) || GetMouseWheel() < 0.0f)
+		{
+			VERTEX_2D* pVtx;//頂点情報ポインタ
+
+			g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+			pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+			//カラー
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+			g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+			switch (SelectNew)
 			{
-				VERTEX_2D* pVtx;//頂点情報ポインタ
-
-				g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-				pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
-
-				//カラー
-				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-				g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
-
-				switch (SelectNew)
-				{
-				case SELECT_BACK:
-					SelectNew = SELECT_RETRY;
-					break;
-				case SELECT_RETRY:
-					SelectNew = SELECT_EXIT;
-					break;
-				case SELECT_EXIT:
-					SelectNew = SELECT_BACK;
-					break;
-				}
-				g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-				pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
-
-				//カラー
-				pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-				pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-				pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-				pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-
-				g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+			case SELECT_BACK:
+				SelectNew = SELECT_RETRY;
+				break;
+			case SELECT_RETRY:
+				SelectNew = SELECT_EXIT;
+				break;
+			case SELECT_EXIT:
+				SelectNew = SELECT_BACK;
+				break;
 			}
-		}
+			g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-		if (*(GetJoyStick(STICK_LEFT) + 1) > STICK_DED || *(GetJoyStick(STICK_LEFT) + 1) < -STICK_DED)
-		{
-			bStick = true;
-		}
-		else
-		{
-			bStick = false;
+			pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+			//カラー
+			pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+			pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+			pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+			pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+			g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
 		}
 	}
 
@@ -491,190 +477,626 @@ void UpdateRank(void)
 	{
 		if (!strcmp(ControllerName((CONTROLLER)i), ELE_CON))
 		{
-
-		}
-		else if (!strcmp(ControllerName((CONTROLLER)i), PS_CON))
-		{
-
-		}
-		else if (!strcmp(ControllerName((CONTROLLER)i), NIN_CON))
-		{
-
-		}
-		else if (!IsXInputControllerConnected((CONTROLLER)i) && IsDirectInputControllerConnected((CONTROLLER)i))
-		{
-
-		}
-	}
-
-
-	if (!IsXInputControllerConnected()&&IsDirectInputControllerConnected())
-	{
-		if (g_RankState == RANKSTATE_NORMAL)
-		{
-			if (GetdJoykeyTrigger(11) == true)
+			if (g_RankState == RANKSTATE_NORMAL)
 			{
-				FADE fade;
-				fade = GetFade();
-				if (fade == FADE_NONE)
+				if (GetdJoykeyTrigger(ELEKEY_START,(CONTROLLER)i) == true)
 				{
-					g_RankState = RANKSTATE_SELECT;
-					VERTEX_2D* pVtx;//頂点情報ポインタ
-
-					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
-
-					//カラー
-					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-
-					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
-
-				}
-			}
-		}
-		else
-		{
-			static bool bStick = false;
-
-			if (GetdJoykeyTrigger(10) == true)
-			{
-				g_RankState = RANKSTATE_NORMAL;
-			}
-			else if (GetdJoykeyTrigger(0) == true)
-			{
-				FADE fade;
-				switch (SelectNew)
-				{
-				case SELECT_BACK:
+					FADE fade;
 					fade = GetFade();
 					if (fade == FADE_NONE)
 					{
-						//サウンド
-						StopSound();
-						//切替
-						SetFade(MODE_TITLE);
+						g_RankState = RANKSTATE_SELECT;
+						VERTEX_2D* pVtx;//頂点情報ポインタ
+
+						g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+						pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+						//カラー
+						pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+						g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
 					}
-					break;
-				case SELECT_RETRY:
-					fade = GetFade();
-					if (fade == FADE_NONE)
-					{
-						//サウンド
-						StopSound();
-						//切替
-						SetFade(MODE_GAME);
-					}
-					break;
-				case SELECT_EXIT:
-					fade = GetFade();
-					if (fade == FADE_NONE)
-					{
-						//サウンド
-						StopSound();
-						//切替
-						HWND hWnd;
-						hWnd = GethWnd();
-						PostMessage(hWnd, WM_QUIT, 0, 0);
-					}
-					break;
 				}
-			}
-			else if (bStick == false)
-			{
-				if (GetdJoyPovTrigger(POV_UP, 0) == true || *(GetdJoyStick(STICK_LEFT) + 1) < -STICK_DED)
-				{
-					VERTEX_2D* pVtx;//頂点情報ポインタ
-
-					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
-
-					//カラー
-					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
-
-					switch (SelectNew)
-					{
-					case SELECT_BACK:
-						SelectNew = SELECT_EXIT;
-						break;
-					case SELECT_RETRY:
-						SelectNew = SELECT_BACK;
-						break;
-					case SELECT_EXIT:
-						SelectNew = SELECT_RETRY;
-						break;
-					}
-
-					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
-
-					//カラー
-					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-
-					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
-				}
-				else if (GetdJoyPovTrigger(POV_DOWN, 0) == true || *(GetdJoyStick(STICK_LEFT) + 1) > STICK_DED)
-				{
-					VERTEX_2D* pVtx;//頂点情報ポインタ
-
-					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
-
-					//カラー
-					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
-
-					switch (SelectNew)
-					{
-					case SELECT_BACK:
-						SelectNew = SELECT_RETRY;
-						break;
-					case SELECT_RETRY:
-						SelectNew = SELECT_EXIT;
-						break;
-					case SELECT_EXIT:
-						SelectNew = SELECT_BACK;
-						break;
-					}
-					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
-
-					//カラー
-					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
-
-					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
-				}
-			}
-
-			if (*(GetdJoyStick(STICK_LEFT) + 1) < -STICK_DED || *(GetdJoyStick(STICK_LEFT) + 1) > STICK_DED)
-			{
-				bStick = true;
 			}
 			else
 			{
-				bStick = false;
+				if (GetdJoykeyTrigger(ELEKEY_BACK, (CONTROLLER)i) == true)
+				{
+					g_RankState = RANKSTATE_NORMAL;
+				}
+				else if (GetdJoykeyTrigger(ELEKEY_A, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_TITLE);
+						}
+						break;
+					case SELECT_RETRY:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_GAME);
+						}
+						break;
+					case SELECT_EXIT:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							HWND hWnd;
+							hWnd = GethWnd();
+							PostMessage(hWnd, WM_QUIT, 0, 0);
+						}
+						break;
+					}
+				}
+				if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				{
+					VERTEX_2D* pVtx;//頂点情報ポインタ
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_RETRY:
+						SelectNew = SELECT_BACK;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_RETRY;
+						break;
+					}
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+				}
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
+				{
+					VERTEX_2D* pVtx;//頂点情報ポインタ
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						SelectNew = SELECT_RETRY;
+						break;
+					case SELECT_RETRY:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_BACK;
+						break;
+					}
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+				}
+			}
+		}
+		else if (!strcmp(ControllerName((CONTROLLER)i), PS_CON))
+		{
+			if (g_RankState == RANKSTATE_NORMAL)
+			{
+				if (GetdJoykeyTrigger(PSKEY_START, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					fade = GetFade();
+					if (fade == FADE_NONE)
+					{
+						g_RankState = RANKSTATE_SELECT;
+						VERTEX_2D* pVtx;//頂点情報ポインタ
+
+						g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+						pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+						//カラー
+						pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+						g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					}
+				}
+			}
+			else
+			{
+				if (GetdJoykeyTrigger(PSKEY_BACK, (CONTROLLER)i) == true)
+				{
+					g_RankState = RANKSTATE_NORMAL;
+				}
+				else if (GetdJoykeyTrigger(PSKEY_CI, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_TITLE);
+						}
+						break;
+					case SELECT_RETRY:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_GAME);
+						}
+						break;
+					case SELECT_EXIT:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							HWND hWnd;
+							hWnd = GethWnd();
+							PostMessage(hWnd, WM_QUIT, 0, 0);
+						}
+						break;
+					}
+				}
+				if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				{
+					VERTEX_2D* pVtx;//頂点情報ポインタ
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_RETRY:
+						SelectNew = SELECT_BACK;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_RETRY;
+						break;
+					}
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+				}
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
+				{
+					VERTEX_2D* pVtx;//頂点情報ポインタ
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						SelectNew = SELECT_RETRY;
+						break;
+					case SELECT_RETRY:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_BACK;
+						break;
+					}
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+				}
+			}
+		}
+		else if (!strcmp(ControllerName((CONTROLLER)i), NIN_CON))
+		{
+			if (g_RankState == RANKSTATE_NORMAL)
+			{
+				if (GetdJoykeyTrigger(NINKEY_＋, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					fade = GetFade();
+					if (fade == FADE_NONE)
+					{
+						g_RankState = RANKSTATE_SELECT;
+						VERTEX_2D* pVtx;//頂点情報ポインタ
+
+						g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+						pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+						//カラー
+						pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+						g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					}
+				}
+			}
+			else
+			{
+				if (GetdJoykeyTrigger(NINKEY_－, (CONTROLLER)i) == true)
+				{
+					g_RankState = RANKSTATE_NORMAL;
+				}
+				else if (GetdJoykeyTrigger(NINKEY_A, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_TITLE);
+						}
+						break;
+					case SELECT_RETRY:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_GAME);
+						}
+						break;
+					case SELECT_EXIT:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							HWND hWnd;
+							hWnd = GethWnd();
+							PostMessage(hWnd, WM_QUIT, 0, 0);
+						}
+						break;
+					}
+				}
+				if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				{
+					VERTEX_2D* pVtx;//頂点情報ポインタ
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_RETRY:
+						SelectNew = SELECT_BACK;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_RETRY;
+						break;
+					}
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+				}
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
+				{
+					VERTEX_2D* pVtx;//頂点情報ポインタ
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						SelectNew = SELECT_RETRY;
+						break;
+					case SELECT_RETRY:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_BACK;
+						break;
+					}
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+				}
+			}
+		}
+		else if (!IsXInputControllerConnected((CONTROLLER)i) && IsDirectInputControllerConnected((CONTROLLER)i))
+		{
+			if (g_RankState == RANKSTATE_NORMAL)
+			{
+				if (GetdJoykeyTrigger(DKEY_START, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					fade = GetFade();
+					if (fade == FADE_NONE)
+					{
+						g_RankState = RANKSTATE_SELECT;
+						VERTEX_2D* pVtx;//頂点情報ポインタ
+
+						g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+						pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+						//カラー
+						pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+						pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+						g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					}
+				}
+			}
+			else
+			{
+				if (GetdJoykeyTrigger(DKEY_BACK, (CONTROLLER)i) == true)
+				{
+					g_RankState = RANKSTATE_NORMAL;
+				}
+				else if (GetdJoykeyTrigger(DKEY_A, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_TITLE);
+						}
+						break;
+					case SELECT_RETRY:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_GAME);
+						}
+						break;
+					case SELECT_EXIT:
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							HWND hWnd;
+							hWnd = GethWnd();
+							PostMessage(hWnd, WM_QUIT, 0, 0);
+						}
+						break;
+					}
+				}
+				if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				{
+					VERTEX_2D* pVtx;//頂点情報ポインタ
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_RETRY:
+						SelectNew = SELECT_BACK;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_RETRY;
+						break;
+					}
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+				}
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
+				{
+					VERTEX_2D* pVtx;//頂点情報ポインタ
+
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+
+					switch (SelectNew)
+					{
+					case SELECT_BACK:
+						SelectNew = SELECT_RETRY;
+						break;
+					case SELECT_RETRY:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_BACK;
+						break;
+					}
+					g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX * (SCORE_MAX * MAX_DATA + 1 + SelectNew);
+
+					//カラー
+					pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+				}
 			}
 		}
 	}

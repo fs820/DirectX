@@ -42,8 +42,7 @@ typedef enum
 	CONTROLLER_2,
 	CONTROLLER_3,
 	CONTROLLER_4,
-	CONTROLLER_MAX,
-	CONTROLLER_MAX2
+	CONTROLLER_MAX
 }CONTROLLER;
 
 typedef enum
@@ -97,10 +96,10 @@ typedef enum
 //パッドボタンの種類
 typedef enum
 {
-	PSKEY_□ = 0,
-	PSKEY_×,
-	PSKEY_○,
-	PSKEY_△,
+	PSKEY_SQ = 0,
+	PSKEY_CR,
+	PSKEY_CI,
+	PSKEY_TRA,
 	PSKEY_LB,
 	PSKEY_RB,
 	PSKEY_LT,
@@ -234,6 +233,7 @@ bool IsDirectInputControllerConnected(CONTROLLER Controller);
 char *ControllerName(CONTROLLER Controller);
 int ControllerNum(CONTYPE Contype);
 BOOL CALLBACK EnumDevicesCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
+int XNum(void);
 
 #endif _INPUT_H_
 
