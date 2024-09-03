@@ -2232,16 +2232,16 @@ bool dJoyStickTrigger(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 				switch (DireStick)
 				{
 				case DIRESTICK_UP:
-					fStick = (float)g_djoykeyState[Controller].lY;
+					fStick = (float)g_djoykeyState[i].lY;
 					break;
 				case DIRESTICK_DOWN:
-					fStick = (float)g_djoykeyState[Controller].lY;
+					fStick = (float)g_djoykeyState[i].lY;
 					break;
 				case DIRESTICK_LEFT:
-					fStick = (float)g_djoykeyState[Controller].lX;
+					fStick = (float)g_djoykeyState[i].lX;
 					break;
 				case DIRESTICK_RIGHT:
-					fStick = (float)g_djoykeyState[Controller].lX;
+					fStick = (float)g_djoykeyState[i].lX;
 					break;
 				}
 				break;
@@ -2249,16 +2249,16 @@ bool dJoyStickTrigger(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 				switch (DireStick)
 				{
 				case DIRESTICK_UP:
-					fStick = (float)g_djoykeyState[Controller].lRz;
+					fStick = (float)g_djoykeyState[i].lRz;
 					break;
 				case DIRESTICK_DOWN:
-					fStick = (float)g_djoykeyState[Controller].lRz;
+					fStick = (float)g_djoykeyState[i].lRz;
 					break;
 				case DIRESTICK_LEFT:
-					fStick = (float)g_djoykeyState[Controller].lZ;
+					fStick = (float)g_djoykeyState[i].lZ;
 					break;
 				case DIRESTICK_RIGHT:
-					fStick = (float)g_djoykeyState[Controller].lZ;
+					fStick = (float)g_djoykeyState[i].lZ;
 					break;
 				}
 				break;
@@ -2450,16 +2450,16 @@ bool dJoyStickRelease(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 				switch (DireStick)
 				{
 				case DIRESTICK_UP:
-					fStick = (float)g_djoykeyState[Controller].lY;
+					fStick = (float)g_djoykeyState[i].lY;
 					break;
 				case DIRESTICK_DOWN:
-					fStick = (float)g_djoykeyState[Controller].lY;
+					fStick = (float)g_djoykeyState[i].lY;
 					break;
 				case DIRESTICK_LEFT:
-					fStick = (float)g_djoykeyState[Controller].lX;
+					fStick = (float)g_djoykeyState[i].lX;
 					break;
 				case DIRESTICK_RIGHT:
-					fStick = (float)g_djoykeyState[Controller].lX;
+					fStick = (float)g_djoykeyState[i].lX;
 					break;
 				}
 				break;
@@ -2467,16 +2467,16 @@ bool dJoyStickRelease(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 				switch (DireStick)
 				{
 				case DIRESTICK_UP:
-					fStick = (float)g_djoykeyState[Controller].lRz;
+					fStick = (float)g_djoykeyState[i].lRz;
 					break;
 				case DIRESTICK_DOWN:
-					fStick = (float)g_djoykeyState[Controller].lRz;
+					fStick = (float)g_djoykeyState[i].lRz;
 					break;
 				case DIRESTICK_LEFT:
-					fStick = (float)g_djoykeyState[Controller].lZ;
+					fStick = (float)g_djoykeyState[i].lZ;
 					break;
 				case DIRESTICK_RIGHT:
-					fStick = (float)g_djoykeyState[Controller].lZ;
+					fStick = (float)g_djoykeyState[i].lZ;
 					break;
 				}
 				break;
@@ -2771,16 +2771,16 @@ bool dJoyStickRepeat(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 				switch (DireStick)
 				{
 				case DIRESTICK_UP:
-					fStick = (float)g_djoykeyState[Controller].lY;
+					fStick = (float)g_djoykeyState[i].lY;
 					break;
 				case DIRESTICK_DOWN:
-					fStick = (float)g_djoykeyState[Controller].lY;
+					fStick = (float)g_djoykeyState[i].lY;
 					break;
 				case DIRESTICK_LEFT:
-					fStick = (float)g_djoykeyState[Controller].lX;
+					fStick = (float)g_djoykeyState[i].lX;
 					break;
 				case DIRESTICK_RIGHT:
-					fStick = (float)g_djoykeyState[Controller].lX;
+					fStick = (float)g_djoykeyState[i].lX;
 					break;
 				}
 				break;
@@ -2788,16 +2788,16 @@ bool dJoyStickRepeat(DIRESTICK DireStick, STICK Stick, CONTROLLER Controller)
 				switch (DireStick)
 				{
 				case DIRESTICK_UP:
-					fStick = (float)g_djoykeyState[Controller].lRz;
+					fStick = (float)g_djoykeyState[i].lRz;
 					break;
 				case DIRESTICK_DOWN:
-					fStick = (float)g_djoykeyState[Controller].lRz;
+					fStick = (float)g_djoykeyState[i].lRz;
 					break;
 				case DIRESTICK_LEFT:
-					fStick = (float)g_djoykeyState[Controller].lZ;
+					fStick = (float)g_djoykeyState[i].lZ;
 					break;
 				case DIRESTICK_RIGHT:
-					fStick = (float)g_djoykeyState[Controller].lZ;
+					fStick = (float)g_djoykeyState[i].lZ;
 					break;
 				}
 				break;
@@ -3283,25 +3283,38 @@ void VibratedController(LONG lMotorPower, CONTROLLER Controller)
 	effect.dwGain = DI_FFNOMINALMAX;
 	effect.dwTriggerButton = DIEB_NOTRIGGER;
 
+	// é≤Ç∆ï˚å¸ÇÃê›íË
+	DWORD rgdwAxes[1] = { DIJOFS_X };  // Xé≤ÇÃêUìÆ
+	LONG rglDirection[1] = { 0 };      // ï˚å¸ÇÕê≥ï˚å¸Åi0Åj
+	effect.cAxes = 1;                  // 1é≤
+	effect.rgdwAxes = rgdwAxes;        // égópÇ∑ÇÈé≤
+	effect.rglDirection = rglDirection;// êUìÆÇÃï˚å¸
+
 	DICONSTANTFORCE cf;
 	cf.lMagnitude = lMotorPower;  // êUìÆÇÃã≠Ç≥ (0 - DI_FFNOMINALMAX)
 
 	effect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
 	effect.lpvTypeSpecificParams = &cf;
 
-	if (Controller==CONTROLLER_MAX)
+	if (Controller == CONTROLLER_MAX)
 	{
 		for (int i = 0; i < CONTROLLER_MAX; i++)
 		{
 			if (SUCCEEDED(g_DevdJoypad[i]->CreateEffect(GUID_ConstantForce, &effect, &g_djoyEffect[i], NULL)))
 			{
-				g_djoyEffect[i]->Start(1, 0);
+				if (FAILED(g_djoyEffect[i]->Start(1, 0)))
+				{
+					g_djoyEffect[i]->Release();
+				}
 			}
 		}
 	}
 	else if (SUCCEEDED(g_DevdJoypad[Controller]->CreateEffect(GUID_ConstantForce, &effect, &g_djoyEffect[Controller], NULL)))
 	{
-		g_djoyEffect[Controller]->Start(1, 0);
+		if (FAILED(g_djoyEffect[Controller]->Start(1, 0)))
+		{
+			g_djoyEffect[Controller]->Release();
+		}
 	}
 }
 
@@ -3327,6 +3340,80 @@ void VibratedControllerStop(CONTROLLER Controller)
 		g_djoyEffect[Controller]->Stop();
 		g_djoyEffect[Controller]->Release();
 		g_djoyEffect[Controller] = NULL;
+	}
+}
+
+
+//------------------------
+//
+//êUìÆ
+//
+//------------------------
+void SetVibrate(float fPower, CONTROLLER Controller)
+{
+	static bool bVibate = false;
+	XINPUT_STATE state;
+	ZeroMemory(&state, sizeof(XINPUT_STATE));
+	if (g_DcontrollerNum>=(Controller+1)||Controller==CONTROLLER_MAX)
+	{
+		if (bVibate)
+		{
+			if (Controller == CONTROLLER_MAX)
+			{
+				for (int i = 0; i < g_DcontrollerNum; i++)
+				{
+					if (XInputGetState((CONTROLLER)i, &state) == ERROR_SUCCESS)
+					{
+						VibrateController((WORD)(VIBRATION_MAX * fPower), (WORD)(VIBRATION_MAX * fPower), (CONTROLLER)i);
+					}
+					else
+					{
+						VibratedControllerStop((CONTROLLER)i);
+					}
+				}
+			}
+			else
+			{
+				if (XInputGetState(Controller, &state) == ERROR_SUCCESS)
+				{
+					VibrateController((WORD)(VIBRATION_MAX * fPower), (WORD)(VIBRATION_MAX * fPower), Controller);
+				}
+				else
+				{
+					VibratedControllerStop(Controller);
+				}
+			}
+			bVibate = false;
+		}
+		else
+		{
+			if (Controller == CONTROLLER_MAX)
+			{
+				for (int i = 0; i < g_DcontrollerNum; i++)
+				{
+					if (XInputGetState(i, &state) == ERROR_SUCCESS)
+					{
+						VibrateController((WORD)(VIBRATION_MAX * fPower), (WORD)(VIBRATION_MAX * fPower), (CONTROLLER)i);
+					}
+					else
+					{
+						VibratedController((LONG)(DI_FFNOMINALMAX * fPower), (CONTROLLER)i);
+						bVibate = true;
+					}
+				}
+			}
+
+			if (XInputGetState(Controller, &state) == ERROR_SUCCESS)
+			{
+				VibrateController((WORD)(VIBRATION_MAX * fPower), (WORD)(VIBRATION_MAX * fPower), Controller);
+			}
+			else
+			{
+				VibratedController((LONG)(DI_FFNOMINALMAX * fPower), Controller);
+				bVibate = true;
+			}
+
+		}
 	}
 }
 

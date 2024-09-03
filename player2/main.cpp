@@ -17,6 +17,9 @@
 #include"sound.h"
 #include"option.h"
 #include"cursor.h"
+#include"vs.h"
+
+#define IDI_MYICON "path_to_your_icon.ico"
 
 LPDIRECT3D9 g_pD3D = NULL;//ダイレクトXオブジェクトのグローバルポインタを宣言
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;//ダイレクトXデバイスのグローバルポインタを宣言
@@ -41,12 +44,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 		0,//0
 		0,//0
 		hInstance,//インスタンスハンドル
-		LoadIcon(NULL,IDI_APPLICATION),//タスクバーアイコン
+		LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MYICON)),//タスクバーアイコン
 		LoadCursor(NULL,IDC_ARROW),//マウスカーソル
 		(HBRUSH)(COLOR_WINDOW + 23),//背景色
 		NULL,//メニューバー
 		CLASS_NAME,//クラスの名前
-		LoadIcon(NULL,IDI_APPLICATION)//アイコン
+		LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MYICON))//アイコン
 	};
 
 	srand((int)time(NULL));//乱数設定
@@ -340,6 +343,8 @@ void Uninit(void)
 	UninitDemo();
 	//チュートリアル画面
 	UninitTuto();
+	//対戦画面
+	UninitVs();
 	//ゲーム画面
 	UninitGame();
 	//リザルト画面
@@ -398,6 +403,9 @@ void Update(void)
 	case MODE_GAME:
 		UpdateGame();
 		break;
+	case MODE_VS:
+		UpdateVs();
+		break;
 	case MODE_RESULT:
 		UpdateResult();
 		break;
@@ -444,6 +452,9 @@ void Draw(void)
 		case MODE_GAME:
 			DrawGame();
 			break;
+		case MODE_VS:
+			DrawVs();
+			break;
 		case MODE_RESULT:
 			DrawResult();
 			break;
@@ -485,6 +496,9 @@ void SetMode(MODE mode)
 	case MODE_GAME:
 		UninitGame();
 		break;
+	case MODE_VS:
+		UninitVs();
+		break;
 	case MODE_RESULT:
 		UninitResult();
 		break;
@@ -510,6 +524,9 @@ void SetMode(MODE mode)
 		break;
 	case MODE_GAME:
 		InitGame();
+		break;
+	case MODE_VS:
+		InitVs();
 		break;
 	case MODE_RESULT:
 		InitResult();
@@ -638,6 +655,7 @@ void ResetDevice(void)
 		UninitOption();
 		UninitRank();
 		UninitResult();
+		UninitVs();
 		UninitGame();
 		UninitTuto();
 		UninitDemo();

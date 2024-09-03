@@ -1,4 +1,4 @@
-﻿  game.cpp
+﻿  bullet.cpp
 LINK : warning LNK4075: /INCREMENTAL は /PROFILE の指定によって無視されます。
 back.obj : warning LNK4075: /EDITANDCONTINUE は /OPT:REF の指定によって無視されます。
   player2.vcxproj -> C:\Users\student\source\repos\player2\Debug\player2.exe

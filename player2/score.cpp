@@ -141,7 +141,7 @@ void DrawScore(void)
 //-----------------------------
 //スコアの書き換え(保存)
 //-----------------------------
-void SetScore(int nScore)
+void SetScore(int nScore, bool bTex)
 {
 	VERTEX_2D* pVtx;//頂点情報ポインタ
 	int aPosTexU[SCORE_MAX];
@@ -153,21 +153,24 @@ void SetScore(int nScore)
 		aPosTexU[i] = Digit(g_nScore,i);
 	}
 
-	//座標
-	g_pVtxBuffScore->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-	for (int i = 0; i < SCORE_MAX; i++)
+	if (bTex)
 	{
-		//テクスチャ
-		pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexU[i], UV_DEF / V_MAX_S * (aPosTexU[i] / U_MAX_S));
-		pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexU[i] + UV_DEF / U_MAX_S, UV_DEF / V_MAX_S * (aPosTexU[i] / U_MAX_S));
-		pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexU[i], UV_DEF / V_MAX_S * (aPosTexU[i] / U_MAX_S) + UV_DEF / V_MAX_S);
-		pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexU[i] + UV_DEF / U_MAX_S, UV_DEF / V_MAX_S * (aPosTexU[i] / U_MAX_S) + UV_DEF / V_MAX_S);
+		//座標
+		g_pVtxBuffScore->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-		pVtx += VT_MAX;
+		for (int i = 0; i < SCORE_MAX; i++)
+		{
+			//テクスチャ
+			pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexU[i], UV_DEF / V_MAX_S * (aPosTexU[i] / U_MAX_S));
+			pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexU[i] + UV_DEF / U_MAX_S, UV_DEF / V_MAX_S * (aPosTexU[i] / U_MAX_S));
+			pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexU[i], UV_DEF / V_MAX_S * (aPosTexU[i] / U_MAX_S) + UV_DEF / V_MAX_S);
+			pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_S * aPosTexU[i] + UV_DEF / U_MAX_S, UV_DEF / V_MAX_S * (aPosTexU[i] / U_MAX_S) + UV_DEF / V_MAX_S);
+
+			pVtx += VT_MAX;
+		}
+
+		g_pVtxBuffScore->Unlock();//プレイヤーバッファのアンロック
 	}
-
-	g_pVtxBuffScore->Unlock();//プレイヤーバッファのアンロック
 }
 
 //------------------------------

@@ -14,18 +14,18 @@
 typedef struct
 {
 	D3DXVECTOR3 pos;//位置
-	D3DXVECTOR3 rot;
+	D3DXVECTOR3 move;
 	D3DXCOLOR col;
 	float fRadius;
 	int nLife;//寿命
 	bool bUse;//使用しているかどうか
-	int nBullet;
 }Effect;
 
 //グローバル
 LPDIRECT3DTEXTURE9 g_apTextureEffect = NULL;//テクスチャのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEffect = NULL;//バッファのポインタ
 Effect g_aEffect[MAX_EFFECT];//弾の情報
+int g_nLifeDef[MAX_EFFECT] = { 0 };
 
 //-----------------
 //弾の初期化処理
@@ -41,11 +41,11 @@ void InitEffect(void)
 	for (int i = 0; i < MAX_EFFECT; i++)
 	{
 		g_aEffect[i].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_aEffect[i].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aEffect[i].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
 		g_aEffect[i].fRadius = 0.0f;
-		g_aEffect[i].nLife = EFFECT_LIFE;
+		g_aEffect[i].nLife = 0;
 		g_aEffect[i].bUse = false;//使用していない状態にする
-		g_aEffect[i].nBullet = 99;
 	}
 
 	//バッファの作成
@@ -131,7 +131,6 @@ void UpdateEffect(void)
 	{
 		if (g_aEffect[i].bUse == true)
 		{//弾が使用されている
-			g_aEffect[i].pos += g_aEffect[i].rot;
 
 			g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
 
@@ -142,7 +141,7 @@ void UpdateEffect(void)
 			pVtx[2].pos = D3DXVECTOR3(g_aEffect[i].pos.x - g_aEffect[i].fRadius, g_aEffect[i].pos.y + g_aEffect[i].fRadius, 0.0f);
 			pVtx[3].pos = D3DXVECTOR3(g_aEffect[i].pos.x + g_aEffect[i].fRadius, g_aEffect[i].pos.y + g_aEffect[i].fRadius, 0.0f);
 
-			BYTE alpha = (BYTE)(((float)g_aEffect[i].nLife) / ((float)EFFECT_LIFE) * 255.0f);
+			BYTE alpha = (BYTE)(((float)g_aEffect[i].nLife) / ((float)g_nLifeDef[i]) * 255.0f);
 			pVtx[0].col = (pVtx[0].col & 0x00FFFFFF) | (alpha << 24);
 			pVtx[1].col = (pVtx[1].col & 0x00FFFFFF) | (alpha << 24);
 			pVtx[2].col = (pVtx[2].col & 0x00FFFFFF) | (alpha << 24);
@@ -150,8 +149,10 @@ void UpdateEffect(void)
 
 			g_pVtxBuffEffect->Unlock();//バッファのアンロック
 
+			g_aEffect[i].pos.x += g_aEffect[i].move.x;
+			g_aEffect[i].pos.y += g_aEffect[i].move.y;
 			g_aEffect[i].nLife--;
-			g_aEffect[i].fRadius *= ((float)g_aEffect[i].nLife) / ((float)EFFECT_LIFE);
+			g_aEffect[i].fRadius *= ((float)g_aEffect[i].nLife) / ((float)g_nLifeDef[i]);
 
 			if (g_aEffect[i].nLife <= 0)
 			{
@@ -212,7 +213,7 @@ void DrawEffect(void)
 //-------------------
 //発通常弾
 //-------------------
-void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 rot,D3DXCOLOR col, float fRadius, int nLife, int nBullet)
+void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, float fRadius, int nLife)
 {
 	VERTEX_2D* pVtx;
 
@@ -221,7 +222,7 @@ void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 rot,D3DXCOLOR col, float fRadius, in
 		if (g_aEffect[i].bUse == false)
 		{//弾が使用されていない
 			g_aEffect[i].pos = pos;
-			g_aEffect[i].rot = rot;
+			g_aEffect[i].move = move;
 			g_aEffect[i].col = col;
 			g_aEffect[i].fRadius = fRadius;
 
@@ -242,8 +243,8 @@ void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 rot,D3DXCOLOR col, float fRadius, in
 			g_pVtxBuffEffect->Unlock();//バッファのアンロック
 
 			g_aEffect[i].nLife = nLife;
+			g_nLifeDef[i] = g_aEffect[i].nLife;
 			g_aEffect[i].bUse = true;
-			g_aEffect[i].nBullet = nBullet;
 
 			break;
 		}

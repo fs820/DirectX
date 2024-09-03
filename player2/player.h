@@ -57,7 +57,7 @@ void UninitPlayer(void);//ポリゴンの終了処理
 void UpdatePlayer(void);//ポリゴンの更新処理
 void DrawPlayer(void);//ポリゴンの描画処理
 void HitPlayer(int nDamage);//ヒット処理
-PDIRECT3DVERTEXBUFFER9 GetPlayerBuffer(void);//プレイヤーバッファの取得
+LPDIRECT3DVERTEXBUFFER9 GetPlayerBuffer(void);//プレイヤーバッファの取得
 Player* GetPlayer(void);
 
 #endif _PLAYER_H_

@@ -17,7 +17,7 @@
 #define SELECT_WIDTH (512)//幅
 #define SELECT_HEIGHT (128)//高さ
 #define U_MAX_T (1)
-#define V_MAX_T (5)
+#define V_MAX_T (6)
 
 typedef enum
 {
@@ -29,6 +29,7 @@ typedef enum
 typedef enum
 {
 	SELECT_PLAY = 0,
+	SELECT_VERSUS,
 	SELECT_TUTO,
 	SELECT_RANK,
 	SELECT_OPTION,
@@ -271,7 +272,17 @@ void UpdateTitle(void)
 					//切替
 					SetFade(MODE_GAME);
 				}
-
+				break;
+			case SELECT_VERSUS:
+				DemoCnt = 0;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					//サウンド
+					StopSound();
+					//切替
+					SetFade(MODE_VS);
+				}
 				break;
 			case SELECT_TUTO:
 				DemoCnt = 0;
@@ -348,6 +359,17 @@ void UpdateTitle(void)
 					}
 
 					break;
+				case SELECT_VERSUS:
+					DemoCnt = 0;
+					fade = GetFade();
+					if (fade == FADE_NONE)
+					{
+						//サウンド
+						StopSound();
+						//切替
+						SetFade(MODE_VS);
+					}
+					break;
 				case SELECT_TUTO:
 					DemoCnt = 0;
 					fade = GetFade();
@@ -409,8 +431,11 @@ void UpdateTitle(void)
 			case SELECT_PLAY:
 				SelectNew = SELECT_EXIT;
 				break;
-			case SELECT_TUTO:
+			case SELECT_VERSUS:
 				SelectNew = SELECT_PLAY;
+				break;
+			case SELECT_TUTO:
+				SelectNew = SELECT_VERSUS;
 				break;
 			case SELECT_RANK:
 				SelectNew = SELECT_TUTO;
@@ -440,6 +465,9 @@ void UpdateTitle(void)
 			switch (SelectNew)
 			{
 			case SELECT_PLAY:
+				SelectNew = SELECT_VERSUS;
+				break;
+			case SELECT_VERSUS:
 				SelectNew = SELECT_TUTO;
 				break;
 			case SELECT_TUTO:
@@ -468,143 +496,22 @@ void UpdateTitle(void)
 			g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
 
 		}
+	}
 
-		for (int i = 0; i < ControllerNum(CONTYPE_D); i++)
+	for (int i = 0; i < ControllerNum(CONTYPE_D); i++)
+	{
+		if (!strcmp(ControllerName((CONTROLLER)i), ELE_CON))
 		{
-			if (!strcmp(ControllerName((CONTROLLER)i), ELE_CON))
+			if (g_TitleState == TITLESTATE_NORMAL)
 			{
-				if (g_TitleState == TITLESTATE_NORMAL)
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
 				{
-					FADE fade;
-					fade = GetFade();
-					if (fade == FADE_NONE)
+					if (GetdJoykeyTrigger(ELEKEY_START, (CONTROLLER)i) == true)
 					{
-						if (GetdJoykeyTrigger(ELEKEY_START, (CONTROLLER)i) == true)
-						{
-							g_TitleState = TITLESTATE_SELECT;
-							DemoCnt = 0;
-
-							g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-							pVtx += VT_MAX;
-							//テクスチャ
-							pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-							pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-							pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-							pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-							g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-						}
-
-						DemoCnt++;
-					}
-				}
-				else
-				{
-					if (GetdJoykeyTrigger(ELEKEY_BACK, (CONTROLLER)i) == true)
-					{
-						g_TitleState = TITLESTATE_NORMAL;
-
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-						pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-						pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-						pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
-					}
-					else if (GetdJoykeyTrigger(ELEKEY_A, (CONTROLLER)i) == true)
-					{
-						FADE fade;
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_GAME);
-							}
-
-							break;
-						case SELECT_TUTO:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_TUTO);
-
-							}
-							break;
-						case SELECT_RANK:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_RANK);
-
-							}
-							break;
-						case SELECT_OPTION:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_OPTION);
-
-							}
-							break;
-						case SELECT_EXIT:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								HWND hWnd;
-								hWnd = GethWnd();
-								PostMessage(hWnd, WM_QUIT, 0, 0);
-							}
-							break;
-						}
-					}
-					else if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP,STICK_LEFT,(CONTROLLER)i))
-					{
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							SelectNew = SELECT_EXIT;
-							break;
-						case SELECT_TUTO:
-							SelectNew = SELECT_PLAY;
-							break;
-						case SELECT_RANK:
-							SelectNew = SELECT_TUTO;
-							break;
-						case SELECT_OPTION:
-							SelectNew = SELECT_RANK;
-							break;
-						case SELECT_EXIT:
-							SelectNew = SELECT_OPTION;
-							break;
-						}
+						g_TitleState = TITLESTATE_SELECT;
+						DemoCnt = 0;
 
 						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
@@ -616,592 +523,777 @@ void UpdateTitle(void)
 						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
 
 						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
 					}
-					else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
-					{
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							SelectNew = SELECT_TUTO;
-							break;
-						case SELECT_TUTO:
-							SelectNew = SELECT_RANK;
-							break;
-						case SELECT_RANK:
-							SelectNew = SELECT_OPTION;
-							break;
-						case SELECT_OPTION:
-							SelectNew = SELECT_EXIT;
-							break;
-						case SELECT_EXIT:
-							SelectNew = SELECT_PLAY;
-							break;
-						}
 
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
-					}
+					DemoCnt++;
 				}
 			}
-			else if (!strcmp(ControllerName((CONTROLLER)i), PS_CON))
+			else
 			{
-				if (g_TitleState == TITLESTATE_NORMAL)
+				if (GetdJoykeyTrigger(ELEKEY_BACK, (CONTROLLER)i) == true)
+				{
+					g_TitleState = TITLESTATE_NORMAL;
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+					pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+					pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+					pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+				else if (GetdJoykeyTrigger(ELEKEY_A, (CONTROLLER)i) == true)
 				{
 					FADE fade;
-					fade = GetFade();
-					if (fade == FADE_NONE)
+					switch (SelectNew)
 					{
-						if (GetdJoykeyTrigger(PSKEY_START, (CONTROLLER)i) == true)
+					case SELECT_PLAY:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
 						{
-							g_TitleState = TITLESTATE_SELECT;
-							DemoCnt = 0;
-
-							g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-							pVtx += VT_MAX;
-							//テクスチャ
-							pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-							pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-							pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-							pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-							g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_GAME);
 						}
+						break;
+					case SELECT_VERSUS:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_VS);
+						}
+						break;
+					case SELECT_TUTO:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_TUTO);
 
-						DemoCnt++;
+						}
+						break;
+					case SELECT_RANK:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_RANK);
+
+						}
+						break;
+					case SELECT_OPTION:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_OPTION);
+
+						}
+						break;
+					case SELECT_EXIT:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							HWND hWnd;
+							hWnd = GethWnd();
+							PostMessage(hWnd, WM_QUIT, 0, 0);
+						}
+						break;
 					}
 				}
-				else
+				else if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
 				{
-					if (GetdJoykeyTrigger(PSKEY_BACK, (CONTROLLER)i) == true)
+					switch (SelectNew)
 					{
-						g_TitleState = TITLESTATE_NORMAL;
-
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-						pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-						pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-						pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
+					case SELECT_PLAY:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_VERSUS:
+						SelectNew = SELECT_PLAY;
+						break;
+					case SELECT_TUTO:
+						SelectNew = SELECT_VERSUS;
+						break;
+					case SELECT_RANK:
+						SelectNew = SELECT_TUTO;
+						break;
+					case SELECT_OPTION:
+						SelectNew = SELECT_RANK;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_OPTION;
+						break;
 					}
-					else if (GetdJoykeyTrigger(PSKEY_CI, (CONTROLLER)i) == true)
-					{
-						FADE fade;
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_GAME);
-							}
 
-							break;
-						case SELECT_TUTO:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_TUTO);
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-							}
-							break;
-						case SELECT_RANK:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_RANK);
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+					pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
 
-							}
-							break;
-						case SELECT_OPTION:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_OPTION);
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
 
-							}
-							break;
-						case SELECT_EXIT:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								HWND hWnd;
-								hWnd = GethWnd();
-								PostMessage(hWnd, WM_QUIT, 0, 0);
-							}
-							break;
-						}
-					}
-					else if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
-					{
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							SelectNew = SELECT_EXIT;
-							break;
-						case SELECT_TUTO:
-							SelectNew = SELECT_PLAY;
-							break;
-						case SELECT_RANK:
-							SelectNew = SELECT_TUTO;
-							break;
-						case SELECT_OPTION:
-							SelectNew = SELECT_RANK;
-							break;
-						case SELECT_EXIT:
-							SelectNew = SELECT_OPTION;
-							break;
-						}
-
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
-					}
-					else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
-					{
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							SelectNew = SELECT_TUTO;
-							break;
-						case SELECT_TUTO:
-							SelectNew = SELECT_RANK;
-							break;
-						case SELECT_RANK:
-							SelectNew = SELECT_OPTION;
-							break;
-						case SELECT_OPTION:
-							SelectNew = SELECT_EXIT;
-							break;
-						case SELECT_EXIT:
-							SelectNew = SELECT_PLAY;
-							break;
-						}
-
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
-					}
 				}
-			}
-			else if (!strcmp(ControllerName((CONTROLLER)i), NIN_CON))
-			{
-				if (g_TitleState == TITLESTATE_NORMAL)
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
 				{
-					FADE fade;
-					fade = GetFade();
-					if (fade == FADE_NONE)
+					switch (SelectNew)
 					{
-						if (GetdJoykeyTrigger(NINKEY_＋, (CONTROLLER)i) == true)
-						{
-							g_TitleState = TITLESTATE_SELECT;
-							DemoCnt = 0;
-
-							g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-							pVtx += VT_MAX;
-							//テクスチャ
-							pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-							pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-							pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-							pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-							g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-						}
-
-						DemoCnt++;
+					case SELECT_PLAY:
+						SelectNew = SELECT_VERSUS;
+						break;
+					case SELECT_VERSUS:
+						SelectNew = SELECT_TUTO;
+						break;
+					case SELECT_TUTO:
+						SelectNew = SELECT_RANK;
+						break;
+					case SELECT_RANK:
+						SelectNew = SELECT_OPTION;
+						break;
+					case SELECT_OPTION:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_PLAY;
+						break;
 					}
-				}
-				else
-				{
-					if (GetdJoykeyTrigger(NINKEY_－, (CONTROLLER)i) == true)
-					{
-						g_TitleState = TITLESTATE_NORMAL;
 
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-						pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-						pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-						pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+					pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
 
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
 
-					}
-					else if (GetdJoykeyTrigger(NINKEY_A, (CONTROLLER)i) == true)
-					{
-						FADE fade;
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_GAME);
-							}
-
-							break;
-						case SELECT_TUTO:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_TUTO);
-
-							}
-							break;
-						case SELECT_RANK:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_RANK);
-
-							}
-							break;
-						case SELECT_OPTION:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_OPTION);
-
-							}
-							break;
-						case SELECT_EXIT:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								HWND hWnd;
-								hWnd = GethWnd();
-								PostMessage(hWnd, WM_QUIT, 0, 0);
-							}
-							break;
-						}
-					}
-					else if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
-					{
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							SelectNew = SELECT_EXIT;
-							break;
-						case SELECT_TUTO:
-							SelectNew = SELECT_PLAY;
-							break;
-						case SELECT_RANK:
-							SelectNew = SELECT_TUTO;
-							break;
-						case SELECT_OPTION:
-							SelectNew = SELECT_RANK;
-							break;
-						case SELECT_EXIT:
-							SelectNew = SELECT_OPTION;
-							break;
-						}
-
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
-					}
-					else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
-					{
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							SelectNew = SELECT_TUTO;
-							break;
-						case SELECT_TUTO:
-							SelectNew = SELECT_RANK;
-							break;
-						case SELECT_RANK:
-							SelectNew = SELECT_OPTION;
-							break;
-						case SELECT_OPTION:
-							SelectNew = SELECT_EXIT;
-							break;
-						case SELECT_EXIT:
-							SelectNew = SELECT_PLAY;
-							break;
-						}
-
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
-					}
-				}
-			}
-			else if (!IsXInputControllerConnected((CONTROLLER)i) && IsDirectInputControllerConnected((CONTROLLER)i))
-			{
-				if (g_TitleState == TITLESTATE_NORMAL)
-				{
-					FADE fade;
-					fade = GetFade();
-					if (fade == FADE_NONE)
-					{
-						if (GetdJoykeyTrigger(DKEY_START, (CONTROLLER)i) == true)
-						{
-							g_TitleState = TITLESTATE_SELECT;
-							DemoCnt = 0;
-
-							g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-							pVtx += VT_MAX;
-							//テクスチャ
-							pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-							pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-							pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-							pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-							g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-						}
-
-						DemoCnt++;
-					}
-				}
-				else
-				{
-					if (GetdJoykeyTrigger(DKEY_BACK, (CONTROLLER)i) == true)
-					{
-						g_TitleState = TITLESTATE_NORMAL;
-
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-						pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-						pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-						pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
-					}
-					else if (GetdJoykeyTrigger(DKEY_A, (CONTROLLER)i) == true)
-					{
-						FADE fade;
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_GAME);
-							}
-
-							break;
-						case SELECT_TUTO:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_TUTO);
-
-							}
-							break;
-						case SELECT_RANK:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_RANK);
-
-							}
-							break;
-						case SELECT_OPTION:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								SetFade(MODE_OPTION);
-
-							}
-							break;
-						case SELECT_EXIT:
-							DemoCnt = 0;
-							fade = GetFade();
-							if (fade == FADE_NONE)
-							{
-								//サウンド
-								StopSound();
-								//切替
-								HWND hWnd;
-								hWnd = GethWnd();
-								PostMessage(hWnd, WM_QUIT, 0, 0);
-							}
-							break;
-						}
-					}
-					else if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
-					{
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							SelectNew = SELECT_EXIT;
-							break;
-						case SELECT_TUTO:
-							SelectNew = SELECT_PLAY;
-							break;
-						case SELECT_RANK:
-							SelectNew = SELECT_TUTO;
-							break;
-						case SELECT_OPTION:
-							SelectNew = SELECT_RANK;
-							break;
-						case SELECT_EXIT:
-							SelectNew = SELECT_OPTION;
-							break;
-						}
-
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
-					}
-					else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
-					{
-						switch (SelectNew)
-						{
-						case SELECT_PLAY:
-							SelectNew = SELECT_TUTO;
-							break;
-						case SELECT_TUTO:
-							SelectNew = SELECT_RANK;
-							break;
-						case SELECT_RANK:
-							SelectNew = SELECT_OPTION;
-							break;
-						case SELECT_OPTION:
-							SelectNew = SELECT_EXIT;
-							break;
-						case SELECT_EXIT:
-							SelectNew = SELECT_PLAY;
-							break;
-						}
-
-						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
-
-						pVtx += VT_MAX;
-						//テクスチャ
-						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
-						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
-
-						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
-
-					}
 				}
 			}
 		}
+		else if (!strcmp(ControllerName((CONTROLLER)i), PS_CON))
+		{
+			if (g_TitleState == TITLESTATE_NORMAL)
+			{
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					if (GetdJoykeyTrigger(PSKEY_START, (CONTROLLER)i) == true)
+					{
+						g_TitleState = TITLESTATE_SELECT;
+						DemoCnt = 0;
 
+						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+						pVtx += VT_MAX;
+						//テクスチャ
+						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+
+						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+					}
+
+					DemoCnt++;
+				}
+			}
+			else
+			{
+				if (GetdJoykeyTrigger(PSKEY_BACK, (CONTROLLER)i) == true)
+				{
+					g_TitleState = TITLESTATE_NORMAL;
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+					pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+					pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+					pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+				else if (GetdJoykeyTrigger(PSKEY_CI, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					switch (SelectNew)
+					{
+					case SELECT_PLAY:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_GAME);
+						}
+						break;
+					case SELECT_VERSUS:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_VS);
+						}
+						break;
+					case SELECT_TUTO:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_TUTO);
+
+						}
+						break;
+					case SELECT_RANK:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_RANK);
+
+						}
+						break;
+					case SELECT_OPTION:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_OPTION);
+
+						}
+						break;
+					case SELECT_EXIT:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							HWND hWnd;
+							hWnd = GethWnd();
+							PostMessage(hWnd, WM_QUIT, 0, 0);
+						}
+						break;
+					}
+				}
+				else if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				{
+					switch (SelectNew)
+					{
+					case SELECT_PLAY:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_VERSUS:
+						SelectNew = SELECT_PLAY;
+						break;
+					case SELECT_TUTO:
+						SelectNew = SELECT_VERSUS;
+						break;
+					case SELECT_RANK:
+						SelectNew = SELECT_TUTO;
+						break;
+					case SELECT_OPTION:
+						SelectNew = SELECT_RANK;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_OPTION;
+						break;
+					}
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+					pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
+				{
+					switch (SelectNew)
+					{
+					case SELECT_PLAY:
+						SelectNew = SELECT_VERSUS;
+						break;
+					case SELECT_VERSUS:
+						SelectNew = SELECT_TUTO;
+						break;
+					case SELECT_TUTO:
+						SelectNew = SELECT_RANK;
+						break;
+					case SELECT_RANK:
+						SelectNew = SELECT_OPTION;
+						break;
+					case SELECT_OPTION:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_PLAY;
+						break;
+					}
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+					pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+			}
+		}
+		else if (!strcmp(ControllerName((CONTROLLER)i), NIN_CON))
+		{
+			if (g_TitleState == TITLESTATE_NORMAL)
+			{
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					if (GetdJoykeyTrigger(NINKEY_＋, (CONTROLLER)i) == true)
+					{
+						g_TitleState = TITLESTATE_SELECT;
+						DemoCnt = 0;
+
+						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+						pVtx += VT_MAX;
+						//テクスチャ
+						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+
+						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+					}
+
+					DemoCnt++;
+				}
+			}
+			else
+			{
+				if (GetdJoykeyTrigger(NINKEY_－, (CONTROLLER)i) == true)
+				{
+					g_TitleState = TITLESTATE_NORMAL;
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+					pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+					pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+					pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+				else if (GetdJoykeyTrigger(NINKEY_A, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					switch (SelectNew)
+					{
+					case SELECT_PLAY:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_GAME);
+						}
+						break;
+					case SELECT_VERSUS:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_VS);
+						}
+						break;
+					case SELECT_TUTO:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_TUTO);
+
+						}
+						break;
+					case SELECT_RANK:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_RANK);
+
+						}
+						break;
+					case SELECT_OPTION:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_OPTION);
+
+						}
+						break;
+					case SELECT_EXIT:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							HWND hWnd;
+							hWnd = GethWnd();
+							PostMessage(hWnd, WM_QUIT, 0, 0);
+						}
+						break;
+					}
+				}
+				else if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				{
+					switch (SelectNew)
+					{
+					case SELECT_PLAY:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_VERSUS:
+						SelectNew = SELECT_PLAY;
+						break;
+					case SELECT_TUTO:
+						SelectNew = SELECT_VERSUS;
+						break;
+					case SELECT_RANK:
+						SelectNew = SELECT_TUTO;
+						break;
+					case SELECT_OPTION:
+						SelectNew = SELECT_RANK;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_OPTION;
+						break;
+					}
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+					pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
+				{
+					switch (SelectNew)
+					{
+					case SELECT_PLAY:
+						SelectNew = SELECT_VERSUS;
+						break;
+					case SELECT_VERSUS:
+						SelectNew = SELECT_TUTO;
+						break;
+					case SELECT_TUTO:
+						SelectNew = SELECT_RANK;
+						break;
+					case SELECT_RANK:
+						SelectNew = SELECT_OPTION;
+						break;
+					case SELECT_OPTION:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_PLAY;
+						break;
+					}
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+					pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+			}
+		}
+		else if (!IsXInputControllerConnected((CONTROLLER)i) && IsDirectInputControllerConnected((CONTROLLER)i))
+		{
+			if (g_TitleState == TITLESTATE_NORMAL)
+			{
+				FADE fade;
+				fade = GetFade();
+				if (fade == FADE_NONE)
+				{
+					if (GetdJoykeyTrigger(DKEY_START, (CONTROLLER)i) == true)
+					{
+						g_TitleState = TITLESTATE_SELECT;
+						DemoCnt = 0;
+
+						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+						pVtx += VT_MAX;
+						//テクスチャ
+						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+						pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+						pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+
+						g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+					}
+
+					DemoCnt++;
+				}
+			}
+			else
+			{
+				if (GetdJoykeyTrigger(DKEY_BACK, (CONTROLLER)i) == true)
+				{
+					g_TitleState = TITLESTATE_NORMAL;
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+					pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+					pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+					pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+				else if (GetdJoykeyTrigger(DKEY_A, (CONTROLLER)i) == true)
+				{
+					FADE fade;
+					switch (SelectNew)
+					{
+					case SELECT_PLAY:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_GAME);
+						}
+						break;
+					case SELECT_VERSUS:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_VS);
+						}
+						break;
+					case SELECT_TUTO:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_TUTO);
+
+						}
+						break;
+					case SELECT_RANK:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_RANK);
+
+						}
+						break;
+					case SELECT_OPTION:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							SetFade(MODE_OPTION);
+
+						}
+						break;
+					case SELECT_EXIT:
+						DemoCnt = 0;
+						fade = GetFade();
+						if (fade == FADE_NONE)
+						{
+							//サウンド
+							StopSound();
+							//切替
+							HWND hWnd;
+							hWnd = GethWnd();
+							PostMessage(hWnd, WM_QUIT, 0, 0);
+						}
+						break;
+					}
+				}
+				else if (GetdJoyPovTrigger(POV_UP, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				{
+					switch (SelectNew)
+					{
+					case SELECT_PLAY:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_VERSUS:
+						SelectNew = SELECT_PLAY;
+						break;
+					case SELECT_TUTO:
+						SelectNew = SELECT_VERSUS;
+						break;
+					case SELECT_RANK:
+						SelectNew = SELECT_TUTO;
+						break;
+					case SELECT_OPTION:
+						SelectNew = SELECT_RANK;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_OPTION;
+						break;
+					}
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+					pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
+				{
+					switch (SelectNew)
+					{
+					case SELECT_PLAY:
+						SelectNew = SELECT_VERSUS;
+						break;
+					case SELECT_VERSUS:
+						SelectNew = SELECT_TUTO;
+						break;
+					case SELECT_TUTO:
+						SelectNew = SELECT_RANK;
+						break;
+					case SELECT_RANK:
+						SelectNew = SELECT_OPTION;
+						break;
+					case SELECT_OPTION:
+						SelectNew = SELECT_EXIT;
+						break;
+					case SELECT_EXIT:
+						SelectNew = SELECT_PLAY;
+						break;
+					}
+
+					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+					pVtx += VT_MAX;
+					//テクスチャ
+					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
+					pVtx[2].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+					pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T) + UV_DEF / V_MAX_T);
+
+					g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+				}
+			}
+		}
 	}
+
 
 	if (DemoCnt >= DEMO_TIME)
 	{

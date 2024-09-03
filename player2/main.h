@@ -30,7 +30,7 @@
 
 // 名前
 #define CLASS_NAME "WindowClass" // クラス名
-#define WINDOW_NAME "これが私のシューティングゲームだ!!!!!!!!!!!!!!!!!" // ウインドウ名
+#define WINDOW_NAME "「勇者は結局兵器が強いことに気付いたようです」になる予定のもの" // ウインドウ名
 #define DATA_FILE "data\\DATA\\data.bin"
 #define TEXTURE_CURSOR "data\\TEXTURE\\Cursor.png"
 #define TEXTURE_TITLE "data\\TEXTURE\\title000.png"
@@ -39,9 +39,7 @@
 #define TEXTURE_RESULT "data\\TEXTURE\\result000.png"
 #define TEXTURE_SELECTRESTART "data\\TEXTURE\\Restart.png"
 #define TEXTURE_NAME2 "data\\TEXTURE\\gita.png" // テクスチャ名2
-#define TEXTURE_NAME_BULLET "data\\TEXTURE\\onpu.png" // テクスチャ名2
-#define TEXTURE_NAME_BULLET2 "data\\TEXTURE\\bg2.jpg" // テクスチャ名2
-#define TEXTURE_NAME_BULLET3 "data\\TEXTURE\\onpu3.png" // テクスチャ名2
+#define TEXTURE_NAME_BULLET "data\\TEXTURE\\bullet000.png" // テクスチャ名2
 #define TEXTURE_NAME_BG1 "data\\TEXTURE\\bg100.png"
 #define TEXTURE_NAME_BG2 "data\\TEXTURE\\bg101.png"
 #define TEXTURE_NAME_BG3 "data\\TEXTURE\\bg102.png"
@@ -87,6 +85,7 @@ typedef enum
 	MODE_DEMO,
 	MODE_TUTO,
 	MODE_GAME,
+	MODE_VS,
 	MODE_RESULT,
 	MODE_RANK,
 	MODE_OPTION,

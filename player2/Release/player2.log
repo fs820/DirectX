@@ -1,33 +1,20 @@
-﻿  back.cpp
+﻿  boss.cpp
   bullet.cpp
-  cursor.cpp
-  data.cpp
   demo.cpp
   democpu.cpp
-  effect.cpp
   enemy.cpp
-  explosion.cpp
-  fade.cpp
   game.cpp
-  input.cpp
-  main.cpp
-  option.cpp
   player.cpp
+  player2.cpp
+C:\Users\student\source\repos\player2\player2.cpp(133,9): warning C4101: 'pMouseMove': ローカル変数は 1 度も使われていません。
+C:\Users\student\source\repos\player2\player2.cpp(134,8): warning C4101: 'fMouseWheel': ローカル変数は 1 度も使われていません。
   rank.cpp
   result.cpp
   score.cpp
-  sound.cpp
-  title.cpp
-  コンパイル中...
   tuto.cpp
   コード生成しています。
-C:\Users\student\source\repos\player2\input.cpp(797): warning C4172: ローカル変数またはテンポラリのアドレスを返します: fStick
-C:\Users\student\source\repos\player2\input.cpp(2072): warning C4172: ローカル変数またはテンポラリのアドレスを返します: fStick
-C:\Users\student\source\repos\player2\input.cpp(418): warning C4172: ローカル変数またはテンポラリのアドレスを返します: MouseMove
-C:\Users\student\source\repos\player2\data.cpp(72): warning C4172: ローカル変数またはテンポラリのアドレスを返します: aData
-C:\Users\student\source\repos\player2\data.cpp(82): warning C4172: ローカル変数またはテンポラリのアドレスを返します: aData
-  139 of 191 functions (72.8%) were compiled, the rest were copied from previous compilation.
-    55 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
+  35 of 229 functions (15.3%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    16 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   player2.vcxproj -> C:\Users\student\source\repos\player2\player2.exe

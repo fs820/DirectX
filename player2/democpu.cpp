@@ -9,6 +9,7 @@
 #include"back.h"
 #include"bullet.h"
 #include"explosion.h"
+#include"exef.h"
 #include"score.h"
 
 //グローバル変数宣言
@@ -223,9 +224,7 @@ void UpdateDemoCpu(void)
 
 	if (nRand >= 98 && nRand < 100)
 	{
-		SetExplosion(g_DemoCpu.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_DemoCpu.fLength);
-		g_DemoCpu.nLife = 0;
-		g_DemoCpu.state = DEMOCPUSTATE_DIE;
+		SetSearchBullet(g_DemoCpu.pos, g_DemoCpu.rot.z, g_DemoCpu.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
 	}
 
 	//位置の更新
@@ -340,7 +339,7 @@ void HitDemoCpu(int nDamage)
 
 	if (g_DemoCpu.nLife <= 0)
 	{
-		SetExplosion(g_DemoCpu.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_DemoCpu.fLength);
+		SetExef(g_DemoCpu.pos,g_DemoCpu.fLength);
 		g_DemoCpu.state = DEMOCPUSTATE_DIE;
 		AddScore(-nDamage * SCORE_DIE);
 	}

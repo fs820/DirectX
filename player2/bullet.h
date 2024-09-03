@@ -11,12 +11,13 @@
 #include"main.h"
 
 #define MAX_BULLET (256)//ç≈ëÂêî
-#define MAX_BULLET_TYPE (3)
+#define MAX_BULLET_TYPE (4)
 #define BULLET_WIDTH (25.0f)
 #define BULLET_HEIGHT (25.0f)
 #define BULLET_SPEED (15.0f)
 #define BULLET_INTER (5)
 #define ALL_BULLET (10)
+#define ALL_BULLETS (6)
 #define BULLET_LIFE (100)
 
 //éÌóﬁ
@@ -24,6 +25,7 @@ typedef enum
 {
 	BULLETTYPE_PLAYER = 0,
 	BULLETTYPE_ENEMY,
+	BULLETTYPE_BOSS,
 	BULLETTYPE_MAX
 }BULLETTYPE;
 
@@ -34,5 +36,6 @@ void DrawBullet(void);//íeÇÃï`âÊèàóù
 void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fLengthPlayer, int nLife, BULLETTYPE type,int nInter);//í èÌíe
 void Set3Bullet(D3DXVECTOR3 pos, float Playerrot, float fLengthPlayer, int nLife, BULLETTYPE type, int nInter);//3weyíe
 void SetAllBullet(D3DXVECTOR3 pos, float Playerrot, float fLengthPlayer, int nLife, BULLETTYPE type, int nInter);//ëSï˚à íe
+void SetSearchBullet(D3DXVECTOR3 pos, float Playerrot, float fLengthPlayer, int nLife, BULLETTYPE type, int nInter);//óUì±íe
 
 #endif _BULLET_H_

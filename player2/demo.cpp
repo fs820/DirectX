@@ -15,6 +15,8 @@
 #include"fade.h"
 #include"sound.h"
 #include"score.h"
+#include"effect.h"
+#include"exef.h"
 
 #define DEMOEND_TIME (1200)
 
@@ -31,9 +33,11 @@ void InitDemo(void)
 	InitBullet();//弾
 	InitDemoCpu();//プレイヤー
 	InitEnemy();//敵
+	InitEffect();
+	InitExef();
 	InitExplosion();//爆発
 	InitScore();//スコア
-	SetScore(0);//スコア書き換え
+	SetScore(0,true);//スコア書き換え
 	SetEnemy(D3DXVECTOR3(1000.0f, 200.0f, 0.0f), 0);//敵発生
 	SetEnemy(D3DXVECTOR3(1000.0f, 500.0f, 0.0f), 1);//敵発生
 	SetEnemy(D3DXVECTOR3(1000.0f, 350.0f, 0.0f), 2);//敵発生
@@ -52,6 +56,8 @@ void UninitDemo(void)
 
 	UninitScore();//スコア
 	UninitExplosion();//爆発
+	UninitExef();
+	UninitEffect();
 	UninitEnemy();//敵
 	UninitDemoCpu();//プレイヤー
 	UninitBullet();//弾
@@ -75,6 +81,8 @@ void UpdateDemo(void)
 	UpdateBullet();//弾
 	UpdateDemoCpu();//プレイヤー
 	UpdateEnemy();//敵
+	UpdateEffect();
+	UpdateExef();
 	UpdateExplosion();//爆発
 	UpdateScore();//スコア
 
@@ -214,6 +222,8 @@ void DrawDemo(void)
 	DrawBullet();//弾
 	DrawDemoCpu();//プレイヤー
 	DrawEnemy();//敵
+	DrawEffect();
+	DrawExef();
 	DrawExplosion();//爆発
 	DrawScore();//スコア
 }

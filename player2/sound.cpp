@@ -40,6 +40,9 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/BGM/パステルハウス.wav", -1},         //BGM5
 	{"data/BGM/自宅にて.wav", -1},               //BGM6
 	{"data/SE/爆発1.wav", 0},                    //SE1
+	{"data/SE/ラッパのファンファーレ.wav", 0},   //SE2
+	{"data/SE/呪いの旋律.wav", 0},               //SE3
+	{"data/SE/男衆「イヤッホー！」.wav", 0},     //SE4
 };
 
 //=============================================================================

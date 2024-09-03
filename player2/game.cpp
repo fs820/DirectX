@@ -7,9 +7,11 @@
 
 #include"game.h"
 #include"player.h"
+#include"boss.h"
 #include"back.h"
 #include"bullet.h"
 #include"effect.h"
+#include"exef.h"
 #include"explosion.h"
 #include"enemy.h"
 #include"input.h"
@@ -20,6 +22,7 @@
 
 #define SELECT_WIDTH (512)
 #define SELECT_HEIGHT (128)
+#define SPOENE_TIME (200)
 
 typedef enum
 {
@@ -45,14 +48,17 @@ void InitGame(void)
 	InitBullet();//弾
 	InitPlayer();//プレイヤー
 	InitEnemy();//敵
+	InitBoss();
 	InitEffect();
+	InitExef();
 	InitExplosion();//爆発
 	InitScore();//スコア
-	SetScore(0);//スコア書き換え
-	SetEnemy(D3DXVECTOR3(1000.0f, 200.0f, 0.0f), 0);//敵発生
-	SetEnemy(D3DXVECTOR3(1000.0f, 500.0f, 0.0f), 1);//敵発生
-	SetEnemy(D3DXVECTOR3(1000.0f, 350.0f, 0.0f), 2);//敵発生
-	SetEnemy(D3DXVECTOR3(700.0f, 350.0f, 0.0f), 3);//敵発生
+	SetScore(0,true);//スコア書き換え
+	//SetEnemy(D3DXVECTOR3(1000.0f, 200.0f, 0.0f), 0);//敵発生
+	//SetEnemy(D3DXVECTOR3(1000.0f, 500.0f, 0.0f), 1);//敵発生
+	//SetEnemy(D3DXVECTOR3(1000.0f, 350.0f, 0.0f), 2);//敵発生
+	//SetEnemy(D3DXVECTOR3(700.0f, 350.0f, 0.0f), 3);//敵発生
+	SetBoss(D3DXVECTOR3(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.0f), 1);//ボス発生
 
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへポインタ
 	VERTEX_2D* pVtx;//頂点情報ポインタ
@@ -158,7 +164,9 @@ void UninitGame(void)
 
 	UninitScore();//スコア
 	UninitExplosion();//爆発
+	UninitExef();
 	UninitEffect();
+	UninitBoss();
 	UninitEnemy();//敵
 	UninitPlayer();//プレイヤー
 	UninitBullet();//弾
@@ -171,9 +179,16 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	static SELECT SelectNew = SELECT_RESTART;
+	static int SpoEneCount = 0;
 
 	if (g_gameState!=GAMESTATE_PAUSE)
 	{
+		SpoEneCount++;
+		if (SpoEneCount%SPOENE_TIME==0)
+		{
+			//SetEnemy(D3DXVECTOR3((float)(rand() % SCREEN_WIDTH), (float)(rand() % SCREEN_HEIGHT), 0.0f), rand() % NUM_ENEMY);//敵発生
+		}
+
 		if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START,CONTROLLER_MAX) == true||(GetMousePress(MOUSE_LEFT) == true&& GetMousePress(MOUSE_RIGHT) == true&& GetMousePress(MOUSE_SENTER) == true))
 		{
 			FADE fade;
@@ -199,11 +214,12 @@ void UpdateGame(void)
 			}
 		}
 
-		int NumEnemy;
+		int NumEnemy,NumBoss;
 		Player* pPlayer;
 
 		pPlayer = GetPlayer();
 		NumEnemy = GetNumEnemy();
+		NumBoss = GetNumBoss();
 
 		switch (g_gameState)
 		{
@@ -212,7 +228,7 @@ void UpdateGame(void)
 			{
 				SetGameState(GAMESTATE_END);
 			}
-			else if (NumEnemy <= 0)
+			else if (NumEnemy <= 0&&NumBoss<=0)
 			{
 				SetGameState(GAMESTATE_END);
 			}
@@ -556,7 +572,7 @@ void UpdateGame(void)
 
 					g_pVtxBuffGame->Unlock();//プレイヤーバッファのアンロック
 				}
-				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
 				{
 					VERTEX_2D* pVtx;//頂点情報ポインタ
 
@@ -724,7 +740,7 @@ void UpdateGame(void)
 
 					g_pVtxBuffGame->Unlock();//プレイヤーバッファのアンロック
 				}
-				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
 				{
 					VERTEX_2D* pVtx;//頂点情報ポインタ
 
@@ -892,7 +908,7 @@ void UpdateGame(void)
 
 					g_pVtxBuffGame->Unlock();//プレイヤーバッファのアンロック
 				}
-				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
 				{
 					VERTEX_2D* pVtx;//頂点情報ポインタ
 
@@ -1060,7 +1076,7 @@ void UpdateGame(void)
 
 					g_pVtxBuffGame->Unlock();//プレイヤーバッファのアンロック
 				}
-				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_UP, STICK_LEFT, (CONTROLLER)i))
+				else if (GetdJoyPovTrigger(POV_DOWN, 0, (CONTROLLER)i) == true || dJoyStickTrigger(DIRESTICK_DOWN, STICK_LEFT, (CONTROLLER)i))
 				{
 					VERTEX_2D* pVtx;//頂点情報ポインタ
 
@@ -1113,7 +1129,9 @@ void UpdateGame(void)
 		UpdateBullet();//弾
 		UpdatePlayer();//プレイヤー
 		UpdateEnemy();//敵
+		UpdateBoss();
 		UpdateEffect();
+		UpdateExef();
 		UpdateExplosion();//爆発
 		UpdateScore();//スコア
 	}
@@ -1129,7 +1147,9 @@ void DrawGame(void)
 	DrawBullet();//弾
 	DrawPlayer();//プレイヤー
 	DrawEnemy();//敵
+	DrawBoss();
 	DrawEffect();
+	DrawExef();
 	DrawExplosion();//爆発
 	DrawScore();//スコア
 

@@ -12,6 +12,8 @@
 #include"score.h"
 #include"data.h"
 
+#define RESULT_TIME (600)
+
 LPDIRECT3DTEXTURE9 g_apTextureResult[RESULT_MAX] = { NULL };//テクスチャのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffResult = NULL;//バッファのポインタ
 
@@ -156,8 +158,11 @@ void UninitResult(void)
 //--------------
 void UpdateResult(void)
 {
+	static int nResultTime = 0;
+
 	if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START,CONTROLLER_MAX) == true||GetMouseTrigger(MOUSE_LEFT)==true)
 	{
+		nResultTime = 0;
 		FADE fade;
 		fade = GetFade();
 		if (fade == FADE_NONE)
@@ -175,6 +180,7 @@ void UpdateResult(void)
 		{
 			if (GetdJoykeyTrigger(ELEKEY_START, (CONTROLLER)i))
 			{
+				nResultTime = 0;
 				FADE fade;
 				fade = GetFade();
 				if (fade == FADE_NONE)
@@ -190,6 +196,7 @@ void UpdateResult(void)
 		{
 			if (GetdJoykeyTrigger(PSKEY_START, (CONTROLLER)i))
 			{
+				nResultTime = 0;
 				FADE fade;
 				fade = GetFade();
 				if (fade == FADE_NONE)
@@ -205,6 +212,7 @@ void UpdateResult(void)
 		{
 			if (GetdJoykeyTrigger(NINKEY_＋, (CONTROLLER)i))
 			{
+				nResultTime = 0;
 				FADE fade;
 				fade = GetFade();
 				if (fade == FADE_NONE)
@@ -220,6 +228,7 @@ void UpdateResult(void)
 		{
 			if (GetdJoykeyTrigger(DKEY_START, (CONTROLLER)i))
 			{
+				nResultTime = 0;
 				FADE fade;
 				fade = GetFade();
 				if (fade == FADE_NONE)
@@ -232,6 +241,21 @@ void UpdateResult(void)
 			}
 		}
 	}
+
+	if (nResultTime%RESULT_TIME==0)
+	{
+		FADE fade;
+		fade = GetFade();
+		if (fade == FADE_NONE)
+		{
+			//サウンド
+			StopSound();
+			//切替
+			SetFade(MODE_RANK);
+		}
+	}
+
+	nResultTime++;
 }
 
 //-------------------

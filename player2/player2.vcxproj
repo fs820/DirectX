@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="back.cpp" />
+    <ClCompile Include="boss.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="data.cpp" />
@@ -154,6 +155,7 @@
     <ClCompile Include="democpu.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="exef.cpp" />
     <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="game.cpp" />
@@ -161,15 +163,18 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="option.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="player2.cpp" />
     <ClCompile Include="rank.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tuto.cpp" />
+    <ClCompile Include="vs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="back.h" />
+    <ClInclude Include="boss.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="cursor.h" />
     <ClInclude Include="data.h" />
@@ -177,6 +182,7 @@
     <ClInclude Include="democpu.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="exef.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
@@ -184,12 +190,21 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="option.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="player2.h" />
     <ClInclude Include="rank.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="tuto.h" />
+    <ClInclude Include="vs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="main.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

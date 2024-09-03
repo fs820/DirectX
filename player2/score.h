@@ -19,6 +19,8 @@
 
 #define SCORE_HIT (100)
 #define SCORE_DES (1000)
+#define SCORE_HIT_BOSS (1000)
+#define SCORE_DES_BOSS (100000)
 #define SCORE_MISS (1000)
 #define SCORE_DIE (10000)
 
@@ -27,7 +29,7 @@ void InitScore(void);//ポリゴンの初期化処理
 void UninitScore(void);//ポリゴンの終了処理
 void UpdateScore(void);//ポリゴンの更新処理
 void DrawScore(void);//ポリゴンの描画処理
-void SetScore(int nScore);//スコア書き換え
+void SetScore(int nScore,bool bTex);//スコア書き換え
 void AddScore(int nValue);//スコア加算
 int GetScore(void);
 int Digit(int nData, int nDigit);//分割処理

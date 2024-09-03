@@ -17,6 +17,7 @@
 #define SELECT_WIDTH (512)
 #define SELECT_HEIGHT (128)
 #define RANK_MAX (5)
+#define RANK_TIME (600)
 
 typedef enum
 {
@@ -36,6 +37,8 @@ typedef enum
 LPDIRECT3DTEXTURE9 g_apTextureRank[RANK_MAX] = { NULL };//テクスチャのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffRank = NULL;//バッファのポインタ
 RANKSTATE g_RankState = RANKSTATE_NORMAL;
+int g_nNewDataRank;
+bool g_bRankin = false;
 
 //--------------------
 //初期化処理
@@ -124,12 +127,27 @@ void InitRank(void)
 	//表示準備
 	for (int i = 0; i < MAX_DATA; i++)
 	{
+		if (nScore[i] == GetScore()&&nScore[i]!=0)
+		{
+			g_nNewDataRank = i;
+			g_bRankin=true;
+			break;
+		}
+		else if (i==MAX_DATA-1)
+		{
+			g_nNewDataRank = 99;
+			g_bRankin = false;
+		}
+	}
+	for (int i = 0; i < MAX_DATA; i++)
+	{
 		for (int i2 = 0; i2 < SCORE_MAX; i2++)
 		{
 			aPosTexUr[i][i2] = Digit(nScore[i], i2);
 		}
 	}
 
+	SetScore(0, false);
 	posScore = D3DXVECTOR3(SCREEN_WIDTH / 2 - (SCORE_WIDTH / U_MAX_S) * (SCORE_MAX / 2), SCORE_HEIGHT/2, 0.0f);
 	posScoreDef = posScore;
 	D3DXVECTOR3 posSelect = D3DXVECTOR3(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - SELECT_HEIGHT, 0.0f);
@@ -229,6 +247,21 @@ void InitRank(void)
 
 	g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
 	PlaySound(SOUND_LABEL_BGM6);
+	if (g_bRankin)
+	{
+		if (g_nNewDataRank==0)
+		{
+			PlaySound(SOUND_LABEL_BEST);
+		}
+		else
+		{
+			PlaySound(SOUND_LABEL_RANKIN);
+		}
+	}
+	else
+	{
+		PlaySound(SOUND_LABEL_NORANKIN);
+	}
 }
 
 //--------------------
@@ -264,8 +297,25 @@ void UpdateRank(void)
 	static SELECT SelectNew = SELECT_BACK;
 	if (g_RankState==RANKSTATE_NORMAL)
 	{
+		static int nRankTime = 0;
+
+		if (nRankTime % RANK_TIME == 0)
+		{
+			nRankTime = 0;
+			FADE fade;
+			fade = GetFade();
+			if (fade == FADE_NONE)
+			{
+				//サウンド
+				StopSound();
+				//切替
+				SetFade(MODE_TITLE);
+			}
+		}
+
 		if (GetKeyboradTrigger(DIK_RETURN) == true || GetJoykeyTrigger(JOYKEY_START,CONTROLLER_MAX) == true||GetMouseTrigger(MOUSE_LEFT)==true)
 		{
+			nRankTime = 0;
 			FADE fade;
 			fade = GetFade();
 			if (fade == FADE_NONE)
@@ -287,6 +337,8 @@ void UpdateRank(void)
 
 			}
 		}
+
+		nRankTime++;
 	}
 	else
 	{
@@ -1098,6 +1150,44 @@ void UpdateRank(void)
 					g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
 				}
 			}
+		}
+	}
+
+	if (g_RankState == RANKSTATE_NORMAL&&g_bRankin)
+	{
+		static int nCount=0;
+		nCount++;
+		if (nCount%15==0)
+		{
+			static bool bP=false;
+			VERTEX_2D* pVtx;//頂点情報ポインタ
+			g_pVtxBuffRank->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+
+			pVtx += VT_MAX * (SCORE_MAX * g_nNewDataRank + 1);
+
+			for (int i = 0; i < SCORE_MAX; i++)
+			{
+				if (bP)
+				{
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				}
+				else
+				{
+					//カラー
+					pVtx[0].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+				}
+				pVtx += VT_MAX;
+			}
+
+			g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
+			bP = !bP;
 		}
 	}
 }

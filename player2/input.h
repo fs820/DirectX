@@ -227,6 +227,8 @@ bool GetdJoyPovRepeat(float fData, int nPov, CONTROLLER Controller);
 void VibratedController(LONG lMotorPower, CONTROLLER Controller);
 void VibratedControllerStop(CONTROLLER Controller);
 
+void SetVibrate(float fPower, CONTROLLER Controller);
+
 //ê⁄ë±ämîF
 bool IsXInputControllerConnected(CONTROLLER Controller);
 bool IsDirectInputControllerConnected(CONTROLLER Controller);

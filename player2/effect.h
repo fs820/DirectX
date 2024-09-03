@@ -10,13 +10,13 @@
 
 #include"main.h"
 
-#define MAX_EFFECT (8192)//Å‘å”
+#define MAX_EFFECT (16384)//Å‘å”
 #define EFFECT_LIFE (100)
 
 void InitEffect(void);//’e‚Ì‰Šú‰»ˆ—
 void UninitEffect(void);//’e‚ÌI—¹ˆ—
 void UpdateEffect(void);//’e‚ÌXVˆ—
 void DrawEffect(void);//’e‚Ì•`‰æˆ—
-void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 rot,D3DXCOLOR col, float fRadius, int nLife,int Bullet);//’Êí’e
+void SetEffect(D3DXVECTOR3 pos,D3DXVECTOR3 move,D3DXCOLOR col, float fRadius, int nLife);//’Êí’e
 
 #endif _EFFECT_H_

@@ -8,9 +8,9 @@
 #include"bullet.h"
 #include"explosion.h"
 #include"score.h"
+#include"exef.h"
 
 //マクロ定義
-#define NUM_ENEMY (4)
 #define ENEMY_BULLET_INTER (10)
 #define ENEMY_BULLET_SPEEDX (-10.0f)
 #define ENEMY_BULLET_SPEEDY (0.0f)
@@ -163,7 +163,7 @@ void UpdateEnemy(void)
 					aEnemyBulletCnt[i] = 0;
 					//弾の設定
 					int nRand=0;
-					nRand = rand() % 3;
+					nRand = rand() % 4;
 					switch (nRand)
 					{
 					case 0:
@@ -174,6 +174,9 @@ void UpdateEnemy(void)
 						break;
 					case 2:
 						SetAllBullet(g_aEnemy[i].pos, D3DX_PI, ENEMY_BULLET_SIZE, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+						break;
+					case 3:
+						SetSearchBullet(g_aEnemy[i].pos, D3DX_PI, ENEMY_BULLET_SIZE, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
 						break;
 					}
 				}
@@ -193,6 +196,69 @@ void UpdateEnemy(void)
 					g_pVtxBuffEnemy->Unlock();//バッファのアンロック
 				}
 			}
+
+			//float EnemyWidth = 0.0f, EnemyHeight = 0.0f;
+			//switch (g_aEnemy[i].nType)
+			//{
+			//case 0:
+			//	EnemyWidth = ENEMY_WIDTH;
+			//	EnemyHeight = ENEMY_HEIGHT;
+			//	break;
+			//case 1:
+			//	EnemyWidth = ENEMY_WIDTH2;
+			//	EnemyHeight = ENEMY_HEIGHT2;
+			//	break;
+			//case 2:
+			//	EnemyWidth = ENEMY_WIDTH3;
+			//	EnemyHeight = ENEMY_HEIGHT3;
+			//	break;
+			//case 3:
+			//	EnemyWidth = ENEMY_WIDTH4;
+			//	EnemyHeight = ENEMY_HEIGHT4;
+			//	break;
+			//}
+			//for (int i2 = 0; i2 < MAX_ENEMY; i2++)
+			//{
+			//	float EnemyWidth2 = 0.0f, EnemyHeight2 = 0.0f;
+			//	switch (g_aEnemy[i2].nType)
+			//	{
+			//	case 0:
+			//		EnemyWidth2 = ENEMY_WIDTH;
+			//		EnemyHeight2 = ENEMY_HEIGHT;
+			//		break;
+			//	case 1:
+			//		EnemyWidth2 = ENEMY_WIDTH2;
+			//		EnemyHeight2 = ENEMY_HEIGHT2;
+			//		break;
+			//	case 2:
+			//		EnemyWidth2 = ENEMY_WIDTH3;
+			//		EnemyHeight2 = ENEMY_HEIGHT3;
+			//		break;
+			//	case 3:
+			//		EnemyWidth2 = ENEMY_WIDTH4;
+			//		EnemyHeight2 = ENEMY_HEIGHT4;
+			//		break;
+			//	}
+			//	if (i!=i2&& g_aEnemy[i].pos.x - EnemyWidth <= g_aEnemy[i2].pos.x + EnemyWidth2 && g_aEnemy[i].pos.x + EnemyWidth >= g_aEnemy[i2].pos.x - EnemyWidth2 && g_aEnemy[i].pos.y - EnemyHeight <= g_aEnemy[i2].pos.y + EnemyHeight2 && g_aEnemy[i].pos.y + EnemyHeight >= g_aEnemy[i2].pos.y - EnemyHeight2)
+			//	{
+			//		if (g_aEnemy[i].pos.x <= g_aEnemy[i2].pos.x - EnemyWidth2)
+			//		{
+			//			g_aEnemy[i].pos.x = (g_aEnemy[i2].pos.x - EnemyWidth2) - EnemyWidth;
+			//		}
+			//		else if (g_aEnemy[i].pos.x >= g_aEnemy[i2].pos.x + EnemyWidth2)
+			//		{
+			//			g_aEnemy[i].pos.x = (g_aEnemy[i2].pos.x + EnemyWidth2) + EnemyWidth;
+			//		}
+			//		else if (g_aEnemy[i].pos.y <= g_aEnemy[i2].pos.y - EnemyHeight2)
+			//		{
+			//			g_aEnemy[i].pos.y = (g_aEnemy[i2].pos.y - EnemyHeight2) - EnemyHeight;
+			//		}
+			//		else if (g_aEnemy[i].pos.y >= g_aEnemy[i2].pos.y + EnemyHeight2)
+			//		{
+			//			g_aEnemy[i].pos.y = (g_aEnemy[i2].pos.y + EnemyHeight2) + EnemyHeight;
+			//		}
+			//	}
+			//}
 		}
 	}
 }
@@ -261,18 +327,24 @@ void SetEnemy(D3DXVECTOR3 pos, int nType)
 				pVtx[1].pos = D3DXVECTOR3(g_aEnemy[i].pos.x + ENEMY_WIDTH / 2, g_aEnemy[i].pos.y - ENEMY_HEIGHT / 2, 0.0f);
 				pVtx[2].pos = D3DXVECTOR3(g_aEnemy[i].pos.x - ENEMY_WIDTH / 2, g_aEnemy[i].pos.y + ENEMY_HEIGHT / 2, 0.0f);
 				pVtx[3].pos = D3DXVECTOR3(g_aEnemy[i].pos.x + ENEMY_WIDTH / 2, g_aEnemy[i].pos.y + ENEMY_HEIGHT / 2, 0.0f);
+
+				g_aEnemy[i].fLength = sqrtf(ENEMY_WIDTH * ENEMY_WIDTH + ENEMY_HEIGHT * ENEMY_HEIGHT) / 2.0f;
 				break;
 			case 1:
 				pVtx[0].pos = D3DXVECTOR3(g_aEnemy[i].pos.x - ENEMY_WIDTH2 / 2, g_aEnemy[i].pos.y - ENEMY_HEIGHT2 / 2, 0.0f);
 				pVtx[1].pos = D3DXVECTOR3(g_aEnemy[i].pos.x + ENEMY_WIDTH2 / 2, g_aEnemy[i].pos.y - ENEMY_HEIGHT2 / 2, 0.0f);
 				pVtx[2].pos = D3DXVECTOR3(g_aEnemy[i].pos.x - ENEMY_WIDTH2 / 2, g_aEnemy[i].pos.y + ENEMY_HEIGHT2 / 2, 0.0f);
 				pVtx[3].pos = D3DXVECTOR3(g_aEnemy[i].pos.x + ENEMY_WIDTH2 / 2, g_aEnemy[i].pos.y + ENEMY_HEIGHT2 / 2, 0.0f);
+
+				g_aEnemy[i].fLength = sqrtf(ENEMY_WIDTH2 * ENEMY_WIDTH2 + ENEMY_HEIGHT2 * ENEMY_HEIGHT2) / 2.0f;
 				break;
 			case 2:
 				pVtx[0].pos = D3DXVECTOR3(g_aEnemy[i].pos.x - ENEMY_WIDTH3 / 2, g_aEnemy[i].pos.y - ENEMY_HEIGHT3 / 2, 0.0f);
 				pVtx[1].pos = D3DXVECTOR3(g_aEnemy[i].pos.x + ENEMY_WIDTH3 / 2, g_aEnemy[i].pos.y - ENEMY_HEIGHT3 / 2, 0.0f);
 				pVtx[2].pos = D3DXVECTOR3(g_aEnemy[i].pos.x - ENEMY_WIDTH3 / 2, g_aEnemy[i].pos.y + ENEMY_HEIGHT3 / 2, 0.0f);
 				pVtx[3].pos = D3DXVECTOR3(g_aEnemy[i].pos.x + ENEMY_WIDTH3 / 2, g_aEnemy[i].pos.y + ENEMY_HEIGHT3 / 2, 0.0f);
+
+				g_aEnemy[i].fLength = sqrtf(ENEMY_WIDTH3 * ENEMY_WIDTH3 + ENEMY_HEIGHT3 * ENEMY_HEIGHT3) / 2.0f;
 				break;
 			case 3:
 				pVtx[0].pos = D3DXVECTOR3(g_aEnemy[i].pos.x - ENEMY_WIDTH4 / 2, g_aEnemy[i].pos.y - ENEMY_HEIGHT4 / 2, 0.0f);
@@ -280,6 +352,7 @@ void SetEnemy(D3DXVECTOR3 pos, int nType)
 				pVtx[2].pos = D3DXVECTOR3(g_aEnemy[i].pos.x - ENEMY_WIDTH4 / 2, g_aEnemy[i].pos.y + ENEMY_HEIGHT4 / 2, 0.0f);
 				pVtx[3].pos = D3DXVECTOR3(g_aEnemy[i].pos.x + ENEMY_WIDTH4 / 2, g_aEnemy[i].pos.y + ENEMY_HEIGHT4 / 2, 0.0f);
 
+				g_aEnemy[i].fLength = sqrtf(ENEMY_WIDTH4 * ENEMY_WIDTH4 + ENEMY_HEIGHT4 * ENEMY_HEIGHT4) / 2.0f;
 				break;
 			}
 
@@ -301,7 +374,8 @@ void HitEnemy(int nCntEnemy, int nDamage)
 
 	if (g_aEnemy[nCntEnemy].nLife <= 0)
 	{
-		SetExplosion(g_aEnemy[nCntEnemy].pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_aEnemy->fLength);
+		//SetExplosion(g_aEnemy[nCntEnemy].pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_aEnemy->fLength);
+		SetExef(g_aEnemy[nCntEnemy].pos,g_aEnemy[nCntEnemy].fLength);
 		g_aEnemy[nCntEnemy].bUse = false;
 		g_nNumEnemy--;
 		AddScore(nDamage*SCORE_DES);

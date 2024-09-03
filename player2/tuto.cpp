@@ -17,6 +17,7 @@
 #include"score.h"
 #include"cursor.h"
 #include"effect.h"
+#include"exef.h"
 
 #define SELECT_WIDTH (512)
 #define SELECT_HEIGHT (128)
@@ -46,9 +47,10 @@ void InitTuto(void)
 	InitPlayer();//プレイヤー
 	InitEnemy();//敵
 	InitEffect();
+	InitExef();
 	InitExplosion();//爆発
 	InitScore();//スコア
-	SetScore(0);//スコア書き換え
+	SetScore(0,true);//スコア書き換え
 	SetEnemy(D3DXVECTOR3(1000.0f, 200.0f, 0.0f), 0);//敵発生
 	SetEnemy(D3DXVECTOR3(1000.0f, 500.0f, 0.0f), 1);//敵発生
 	SetEnemy(D3DXVECTOR3(1000.0f, 350.0f, 0.0f), 2);//敵発生
@@ -158,6 +160,7 @@ void UninitTuto(void)
 
 	UninitScore();//スコア
 	UninitExplosion();//爆発
+	UninitExef();
 	UninitEffect();
 	UninitEnemy();//敵
 	UninitPlayer();//プレイヤー
@@ -1179,6 +1182,7 @@ void UpdateTuto(void)
 		UpdatePlayer();//プレイヤー
 		UpdateEnemy();//敵
 		UpdateEffect();
+		UpdateExef();
 		UpdateExplosion();//爆発
 		UpdateScore();//スコア
 	}
@@ -1194,6 +1198,7 @@ void DrawTuto(void)
 	DrawPlayer();//プレイヤー
 	DrawEnemy();//敵
 	DrawEffect();
+	DrawExef();
 	DrawExplosion();//爆発
 	DrawScore();//スコア
 

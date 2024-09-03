@@ -13,6 +13,7 @@
 
 //É}ÉNÉçíËã`
 #define MAX_ENEMY (128)
+#define NUM_ENEMY (4)
 #define ENEMY_WIDTH (200)//ïù
 #define ENEMY_HEIGHT (200)//çÇÇ≥
 #define ENEMY_WIDTH2 (193)//ïù

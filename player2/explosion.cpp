@@ -223,7 +223,7 @@ void SetExplosion(D3DXVECTOR3 pos, D3DXCOLOR col, float fLengthBullet)
 
 			g_pVtxBuffExplosion->Unlock();//バッファのアンロック
 
-			PlaySound(SOUND_LABEL_EXPLOSION);
+		    PlaySound(SOUND_LABEL_EXPLOSION);
 			break;
 		}
 	}

@@ -6,10 +6,14 @@
 //----------------------------------------
 
 #include"player.h"
+#include"player2.h"
+#include"enemy.h"
+#include"boss.h"
 #include"input.h"
 #include"back.h"
 #include"bullet.h"
 #include"explosion.h"
+#include"exef.h"
 #include"score.h"
 
 //ÉOÉçÅ[ÉoÉãïœêîêÈåæ
@@ -105,6 +109,7 @@ void InitPlayer(void)
 //-------------------
 void UninitPlayer(void)
 {
+	SetVibrate(0.0f, CONTROLLER_1);
 	//ÉeÉNÉXÉ`ÉÉÇÃîjä¸
 	if (g_pTexturePlayer != NULL)
 	{
@@ -251,30 +256,32 @@ void UpdatePlayer(void)
 		g_Player.fLength = g_Player.fLengthDef;
 	}
 
-	if (GetKeyboradTrigger(DIK_SPACE) == true || GetMouseTrigger(MOUSE_LEFT) == true|| GetJoykeyTrigger(JOYKEY_A, CONTROLLER_1) == true)
+	if (g_Player.state != PLAYERSTATE_APPEAR && g_Player.state != PLAYERSTATE_DIE)
 	{
-		g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
-		g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+		if (GetKeyboradTrigger(DIK_SPACE) == true || GetMouseTrigger(MOUSE_LEFT) == true || GetJoykeyTrigger(JOYKEY_A, CONTROLLER_1) == true)
+		{
+			g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+			g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
-		//íeÇÃê›íË
-		SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-	}
-	else if (GetKeyboradRelease(DIK_B) == true ||  GetMouseRelease(MOUSE_RIGHT) == true|| GetJoykeyRelease(JOYKEY_B, CONTROLLER_1) == true)
-	{
-		//íeÇÃê›íË
-		Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-	}
-	else if (GetKeyboradRepeat(DIK_F) == true ||  GetMouseRepeat(MOUSE_SENTER) == true|| GetJoykeyRepeat(JOYKEY_X, CONTROLLER_1) == true)
-	{
-		//íeÇÃê›íË
-		SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
-	}
+			//íeÇÃê›íË
+			SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+		}
+		else if (GetKeyboradRelease(DIK_B) == true || GetMouseRelease(MOUSE_RIGHT) == true || GetJoykeyRelease(JOYKEY_B, CONTROLLER_1) == true)
+		{
+			//íeÇÃê›íË
+			Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+		}
+		else if (GetKeyboradRepeat(DIK_F) == true || GetMouseRepeat(MOUSE_SENTER) == true || GetJoykeyRepeat(JOYKEY_X, CONTROLLER_1) == true)
+		{
+			//íeÇÃê›íË
+			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+		}
 
-	if (GetKeyboradTrigger(DIK_0) == true || GetJoykeyTrigger(JOYKEY_Y, CONTROLLER_1) == true)
-	{
-		SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
-		g_Player.nLife = 0;
-		g_Player.state = PLAYERSTATE_DIE;
+		if (GetKeyboradRepeat(DIK_U) == true || GetJoykeyRepeat(JOYKEY_Y, CONTROLLER_1) == true)
+		{
+			//íeÇÃê›íË
+			SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+		}
 	}
 
 	if (IsDirectInputControllerConnected(CONTROLLER_1))
@@ -355,30 +362,33 @@ void UpdatePlayer(void)
 			g_Player.fLength = g_Player.fLengthDef;
 		}
 
-		if (GetdJoykeyTrigger(ELEKEY_A, CONTROLLER_1) == true)
+		if (g_Player.state != PLAYERSTATE_APPEAR && g_Player.state != PLAYERSTATE_DIE)
 		{
-			g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
-			g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+			if (GetdJoykeyTrigger(ELEKEY_A, CONTROLLER_1) == true)
+			{
+				g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+				g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
-			//íeÇÃê›íË
-			SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-		}
-		else if (GetdJoykeyRelease(ELEKEY_B, CONTROLLER_1) == true)
-		{
-			//íeÇÃê›íË
-			Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-		}
-		else if (GetdJoykeyRepeat(ELEKEY_X, CONTROLLER_1) == true)
-		{
-			//íeÇÃê›íË
-			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
-		}
+				//íeÇÃê›íË
+				SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+			}
+			else if (GetdJoykeyRelease(ELEKEY_B, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+			}
+			else if (GetdJoykeyRepeat(ELEKEY_X, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+			}
 
-		if (GetdJoykeyTrigger(ELEKEY_Y, CONTROLLER_1) == true)
-		{
-			SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
-			g_Player.nLife = 0;
-			g_Player.state = PLAYERSTATE_DIE;
+			if (GetdJoykeyRepeat(ELEKEY_Y, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+
+			}
 		}
 	}
 	else if (!strcmp(ControllerName(CONTROLLER_1), PS_CON))
@@ -419,30 +429,32 @@ void UpdatePlayer(void)
 			g_Player.fLength = g_Player.fLengthDef;
 		}
 
-		if (GetdJoykeyTrigger(PSKEY_CI, CONTROLLER_1) == true)
+		if (g_Player.state != PLAYERSTATE_APPEAR && g_Player.state != PLAYERSTATE_DIE)
 		{
-			g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
-			g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+			if (GetdJoykeyTrigger(PSKEY_CI, CONTROLLER_1) == true)
+			{
+				g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+				g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
-			//íeÇÃê›íË
-			SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-		}
-		else if (GetdJoykeyRelease(PSKEY_CR, CONTROLLER_1) == true)
-		{
-			//íeÇÃê›íË
-			Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-		}
-		else if (GetdJoykeyRepeat(PSKEY_TRA, CONTROLLER_1) == true)
-		{
-			//íeÇÃê›íË
-			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
-		}
+				//íeÇÃê›íË
+				SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+			}
+			else if (GetdJoykeyRelease(PSKEY_CR, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+			}
+			else if (GetdJoykeyRepeat(PSKEY_TRA, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+			}
 
-		if (GetdJoykeyTrigger(PSKEY_SQ, CONTROLLER_1) == true)
-		{
-			SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
-			g_Player.nLife = 0;
-			g_Player.state = PLAYERSTATE_DIE;
+			if (GetdJoykeyRepeat(PSKEY_SQ, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+			}
 		}
 	}
 	else if (!strcmp(ControllerName(CONTROLLER_1), NIN_CON))
@@ -483,30 +495,32 @@ void UpdatePlayer(void)
 			g_Player.fLength = g_Player.fLengthDef;
 		}
 
-	    if (GetdJoykeyTrigger(NINKEY_A, CONTROLLER_1) == true)
-	    {
-			g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
-			g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+		if (g_Player.state != PLAYERSTATE_APPEAR && g_Player.state != PLAYERSTATE_DIE)
+		{
+			if (GetdJoykeyTrigger(NINKEY_A, CONTROLLER_1) == true)
+			{
+				g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+				g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
-			//íeÇÃê›íË
-			SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-		}
-	    else if (GetdJoykeyRelease(NINKEY_B, CONTROLLER_1) == true)
-	    {
-			//íeÇÃê›íË
-			Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-		}
-	    else if (GetdJoykeyRepeat(NINKEY_X, CONTROLLER_1) == true)
-	    {
-			//íeÇÃê›íË
-			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
-		}
+				//íeÇÃê›íË
+				SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+			}
+			else if (GetdJoykeyRelease(NINKEY_B, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+			}
+			else if (GetdJoykeyRepeat(NINKEY_X, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+			}
 
-	    if (GetdJoykeyTrigger(NINKEY_Y, CONTROLLER_1) == true)
-	    {
-			SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
-			g_Player.nLife = 0;
-			g_Player.state = PLAYERSTATE_DIE;
+			if (GetdJoykeyRepeat(NINKEY_Y, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+			}
 		}
     }
 	else if (!IsXInputControllerConnected(CONTROLLER_1) && IsDirectInputControllerConnected(CONTROLLER_1))
@@ -547,32 +561,232 @@ void UpdatePlayer(void)
 			g_Player.fLength = g_Player.fLengthDef;
 		}
 
-		if (GetdJoykeyTrigger(DKEY_A, CONTROLLER_1) == true)
+		if (g_Player.state != PLAYERSTATE_APPEAR && g_Player.state != PLAYERSTATE_DIE)
 		{
-			g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
-			g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+			if (GetdJoykeyTrigger(DKEY_A, CONTROLLER_1) == true)
+			{
+				g_moveBullet.x = sinf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
+				g_moveBullet.y = cosf(g_Player.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
-			//íeÇÃê›íË
-			SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-		}
-		else if (GetdJoykeyRelease(DKEY_B, CONTROLLER_1) == true)
-		{
-			//íeÇÃê›íË
-			Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
-		}
-		else if (GetdJoykeyRepeat(DKEY_X, CONTROLLER_1) == true)
-		{
-			//íeÇÃê›íË
-			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
-		}
+				//íeÇÃê›íË
+				SetBullet(g_Player.pos, g_moveBullet, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+			}
+			else if (GetdJoykeyRelease(DKEY_B, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				Set3Bullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, 1);
+			}
+			else if (GetdJoykeyRepeat(DKEY_X, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+			}
 
-		if (GetdJoykeyTrigger(DKEY_Y, CONTROLLER_1) == true)
-		{
-			SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
-			g_Player.nLife = 0;
-			g_Player.state = PLAYERSTATE_DIE;
+			if (GetdJoykeyRepeat(DKEY_Y, CONTROLLER_1) == true)
+			{
+				//íeÇÃê›íË
+				SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
+			}
 		}
 	}
+
+	if (g_Player.state != PLAYERSTATE_APPEAR && g_Player.state != PLAYERSTATE_DIE)
+	{
+		Enemy* pEnemy;
+		Boss* pBoss;
+		Player* pPlayer2;
+		float EnemyWidth = 0.0f, EnemyHeight = 0.0f;
+
+		pEnemy = GetEnemy();
+		pBoss = GetBoss();
+		pPlayer2 = GetPlayer2();
+		for (int i = 0; i < MAX_ENEMY; i++, pEnemy++)
+		{
+			if (pEnemy->bUse == true)
+			{//ìGÇ™égópÇ≥ÇÍÇƒÇ¢ÇÈ
+				switch (pEnemy->nType)
+				{
+				case 0:
+					EnemyWidth = ENEMY_WIDTH;
+					EnemyHeight = ENEMY_HEIGHT;
+					break;
+				case 1:
+					EnemyWidth = ENEMY_WIDTH2;
+					EnemyHeight = ENEMY_HEIGHT2;
+					break;
+				case 2:
+					EnemyWidth = ENEMY_WIDTH3;
+					EnemyHeight = ENEMY_HEIGHT3;
+					break;
+				case 3:
+					EnemyWidth = ENEMY_WIDTH4;
+					EnemyHeight = ENEMY_HEIGHT4;
+					break;
+				}
+				if (pEnemy->pos.x - EnemyWidth / 2 <= g_Player.pos.x + g_Player.fLength && pEnemy->pos.x + EnemyWidth / 2 >= g_Player.pos.x - g_Player.fLength && pEnemy->pos.y - EnemyHeight / 2 <= g_Player.pos.y + g_Player.fLength && pEnemy->pos.y + EnemyHeight / 2 >= g_Player.pos.y - g_Player.fLength)
+				{
+					if (g_Player.pos.x <= pEnemy->pos.x - EnemyWidth / 2)
+					{
+						g_Player.pos.x = (pEnemy->pos.x - EnemyWidth / 2) - g_Player.fLength;
+					}
+					else if (g_Player.pos.x >= pEnemy->pos.x + EnemyWidth / 2)
+					{
+						g_Player.pos.x = (pEnemy->pos.x + EnemyWidth / 2) + g_Player.fLength;
+					}
+					else if (g_Player.pos.y <= pEnemy->pos.y - EnemyHeight / 2)
+					{
+						g_Player.pos.y = (pEnemy->pos.y - EnemyHeight / 2) - g_Player.fLength;
+					}
+					else if (g_Player.pos.y >= pEnemy->pos.y + EnemyHeight / 2)
+					{
+						g_Player.pos.y = (pEnemy->pos.y + EnemyHeight / 2) + g_Player.fLength;
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < MAX_BOSS; i++)
+		{
+			if (pBoss->bUse == true)
+			{//ìGÇ™égópÇ≥ÇÍÇƒÇ¢ÇÈ
+				switch (pBoss->nType)
+				{
+				case 0:
+					EnemyWidth = BOSS_WIDTH;
+					EnemyHeight = BOSS_HEIGHT;
+					break;
+				case 1:
+					EnemyWidth = BOSS_WIDTH2;
+					EnemyHeight = BOSS_HEIGHT2;
+					break;
+				case 2:
+					EnemyWidth = BOSS_WIDTH3;
+					EnemyHeight = BOSS_HEIGHT3;
+					break;
+				case 3:
+					EnemyWidth = BOSS_WIDTH4;
+					EnemyHeight = BOSS_HEIGHT4;
+					break;
+				}
+				if (pBoss->pos.x - EnemyWidth / 2 <= g_Player.pos.x + g_Player.fLength && pBoss->pos.x + EnemyWidth / 2 >= g_Player.pos.x - g_Player.fLength && pBoss->pos.y - EnemyHeight / 2 <= g_Player.pos.y + g_Player.fLength && pBoss->pos.y + EnemyHeight / 2 >= g_Player.pos.y - g_Player.fLength)
+				{
+					if (g_Player.pos.x <= pBoss->pos.x - EnemyWidth / 2)
+					{
+						g_Player.pos.x = (pBoss->pos.x - EnemyWidth / 2) - g_Player.fLength;
+					}
+					else if (g_Player.pos.x >= pBoss->pos.x + EnemyWidth / 2)
+					{
+						g_Player.pos.x = (pBoss->pos.x + EnemyWidth / 2) + g_Player.fLength;
+					}
+					else if (g_Player.pos.y <= pBoss->pos.y - EnemyHeight / 2)
+					{
+						g_Player.pos.y = (pBoss->pos.y - EnemyHeight / 2) - g_Player.fLength;
+					}
+					else if (g_Player.pos.y >= pBoss->pos.y + EnemyHeight / 2)
+					{
+						g_Player.pos.y = (pBoss->pos.y + EnemyHeight / 2) + g_Player.fLength;
+					}
+				}
+			}
+		}
+
+		if (pPlayer2->pos.x - pPlayer2->fLength <= g_Player.pos.x + g_Player.fLength && pPlayer2->pos.x + pPlayer2->fLength >= g_Player.pos.x - g_Player.fLength && pPlayer2->pos.y - pPlayer2->fLength <= g_Player.pos.y + g_Player.fLength && pPlayer2->pos.y + pPlayer2->fLength >= g_Player.pos.y - g_Player.fLength)
+		{
+			if (g_Player.pos.x <= pPlayer2->pos.x - pPlayer2->fLength)
+			{
+				if (GetKeyboradPress(DIK_D) || GetJoykeyPress(JOYKEY_RIGHT, CONTROLLER_1)||JoyStickPress(DIRESTICK_RIGHT, STICK_LEFT, CONTROLLER_1))
+				{
+					pPlayer2->pos.x = (g_Player.pos.x + g_Player.fLength) + pPlayer2->fLength;
+				}
+				else
+				{
+					g_Player.pos.x = (pPlayer2->pos.x - pPlayer2->fLength) - g_Player.fLength;
+				}
+
+				if (!IsXInputControllerConnected(CONTROLLER_1),IsDirectInputControllerConnected(CONTROLLER_1))
+				{
+					if (GetdJoyPov(POV_RIGHT,0, CONTROLLER_1) || dJoyStickPress(DIRESTICK_RIGHT,STICK_LEFT,CONTROLLER_1))
+					{
+						pPlayer2->pos.x = (g_Player.pos.x + g_Player.fLength) + pPlayer2->fLength;
+					}
+					else
+					{
+						g_Player.pos.x = (pPlayer2->pos.x - pPlayer2->fLength) - g_Player.fLength;
+					}
+				}
+			}
+			else if (g_Player.pos.x >= pPlayer2->pos.x + pPlayer2->fLength)
+			{
+				if (GetKeyboradPress(DIK_A) || GetJoykeyPress(JOYKEY_LEFT, CONTROLLER_1) || JoyStickPress(DIRESTICK_LEFT, STICK_LEFT, CONTROLLER_1))
+				{
+					pPlayer2->pos.x = (g_Player.pos.x - g_Player.fLength) - pPlayer2->fLength;
+				}
+				else
+				{
+					g_Player.pos.x = (pPlayer2->pos.x + pPlayer2->fLength) + g_Player.fLength;
+				}
+
+				if (!IsXInputControllerConnected(CONTROLLER_1), IsDirectInputControllerConnected(CONTROLLER_1))
+				{
+					if (GetdJoyPov(POV_LEFT, 0, CONTROLLER_1) || dJoyStickPress(DIRESTICK_LEFT, STICK_LEFT, CONTROLLER_1))
+					{
+						pPlayer2->pos.x = (g_Player.pos.x - g_Player.fLength) - pPlayer2->fLength;
+					}
+					else
+					{
+						g_Player.pos.x = (pPlayer2->pos.x + pPlayer2->fLength) + g_Player.fLength;
+					}
+				}
+			}
+			else if (g_Player.pos.y <= pPlayer2->pos.y - pPlayer2->fLength)
+			{
+			    if (GetKeyboradPress(DIK_S) || GetJoykeyPress(JOYKEY_DOWN, CONTROLLER_1) || JoyStickPress(DIRESTICK_DOWN, STICK_LEFT, CONTROLLER_1))
+				{
+					pPlayer2->pos.y = (g_Player.pos.y + g_Player.fLength) + pPlayer2->fLength;
+				}
+				else
+				{
+					g_Player.pos.y = (pPlayer2->pos.y - pPlayer2->fLength) - g_Player.fLength;
+				}
+
+				if (!IsXInputControllerConnected(CONTROLLER_1), IsDirectInputControllerConnected(CONTROLLER_1))
+				{
+					if (GetdJoyPov(POV_DOWN, 0, CONTROLLER_1) || dJoyStickPress(DIRESTICK_DOWN, STICK_LEFT, CONTROLLER_1))
+					{
+						pPlayer2->pos.y = (g_Player.pos.y + g_Player.fLength) + pPlayer2->fLength;
+					}
+					else
+					{
+						g_Player.pos.y = (pPlayer2->pos.y - pPlayer2->fLength) - g_Player.fLength;
+					}
+				}
+			}
+			else if (g_Player.pos.y >= pPlayer2->pos.y + pPlayer2->fLength)
+			{
+				if (GetKeyboradPress(DIK_W) || GetJoykeyPress(JOYKEY_UP, CONTROLLER_1) || JoyStickPress(DIRESTICK_UP, STICK_LEFT, CONTROLLER_1))
+				{
+					pPlayer2->pos.y = (g_Player.pos.y - g_Player.fLength) - pPlayer2->fLength;
+				}
+				else
+				{
+					g_Player.pos.y = (pPlayer2->pos.y + pPlayer2->fLength) + g_Player.fLength;
+				}
+
+				if (!IsXInputControllerConnected(CONTROLLER_1), IsDirectInputControllerConnected(CONTROLLER_1))
+				{
+					if (GetdJoyPov(POV_UP, 0, CONTROLLER_1) || dJoyStickPress(DIRESTICK_UP, STICK_LEFT, CONTROLLER_1))
+					{
+						pPlayer2->pos.y = (g_Player.pos.y - g_Player.fLength) - pPlayer2->fLength;
+					}
+					else
+					{
+						g_Player.pos.y = (pPlayer2->pos.y + pPlayer2->fLength) + g_Player.fLength;
+					}
+				}
+			}
+		}
+	}
+
 
 
 	//à íuÇÃçXêV
@@ -631,6 +845,9 @@ void UpdatePlayer(void)
 
 		switch (g_Player.state)
 		{
+		case PLAYERSTATE_NORMAL:
+			SetVibrate(0.0f, CONTROLLER_1);
+			break;
 		case PLAYERSTATE_APPEAR:
 			g_Player.nCounterState++;
 			if (g_Player.nCounterState>=60)
@@ -655,6 +872,7 @@ void UpdatePlayer(void)
 				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
 			}
 			break;
 		case PLAYERSTATE_DIE:
@@ -712,26 +930,38 @@ void HitPlayer(int nDamage)
 		{
 			if (g_Player.nRema <= 0)
 			{
-				SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
+				//SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
+				SetExef(g_Player.pos,g_Player.fLength);
 				g_Player.state = PLAYERSTATE_DIE;
-				AddScore(-nDamage * SCORE_DIE);
+				if (GetMode() == MODE_GAME)
+				{
+					AddScore(-nDamage * SCORE_DIE);
+				}
 			}
 			else
 			{
-				SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
-				AddScore(-nDamage * SCORE_DIE);
+				//SetExplosion(g_Player.pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f), g_Player.fLength);
+				SetExef(g_Player.pos, g_Player.fLength);
+				if (GetMode() == MODE_GAME)
+				{
+					AddScore(-nDamage * SCORE_DIE);
+				}
 				g_Player.state = PLAYERSTATE_APPEAR;
 				g_Player.nCounterState = 0;
 				g_Player.nRema--;
 				g_Player.nLife = 100;
 				g_Player.pos = D3DXVECTOR3(PLAYER_WIDTH, SCREEN_HEIGHT / 2, 0);//èâä˙à íu
 			}
+			SetVibrate(1.0f, CONTROLLER_1);
 		}
 		else
 		{
 			g_Player.state = PLAYERSTATE_DAMAGE;
 			g_Player.nCounterState = 5;
-			AddScore(-nDamage * SCORE_MISS);
+			if (GetMode()==MODE_GAME)
+			{
+				AddScore(-nDamage * SCORE_MISS);
+			}
 
 			g_pVtxBuffPlayer->Lock(0, 0, (void**)&pVtx, 0);
 			pVtx[0].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
