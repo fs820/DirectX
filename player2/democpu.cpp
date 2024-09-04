@@ -50,7 +50,7 @@ void InitDemoCpu(void)
 	g_DemoCpu.fLengthDef = g_DemoCpu.fLength;//初期保存
 	g_DemoCpu.fAngle = atan2f(DEMOCPU_WIDTH, DEMOCPU_HEIGHT);//角度
 	g_DemoCpu.nLife = 100;
-	g_DemoCpu.state = DEMOCPUSTATE_NORMAL;
+	g_DemoCpu.state = PLAYERSTATE_NORMAL;
 	g_DemoCpu.nCounterState = 0;
 
 	//テクスチャの読み込み
@@ -282,11 +282,11 @@ void UpdateDemoCpu(void)
 
 		switch (g_DemoCpu.state)
 		{
-		case DEMOCPUSTATE_DAMAGE:
+		case PLAYERSTATE_DAMAGE:
 			g_DemoCpu.nCounterState--;
 			if (g_DemoCpu.nCounterState <= 0)
 			{
-				g_DemoCpu.state = DEMOCPUSTATE_NORMAL;
+				g_DemoCpu.state = PLAYERSTATE_NORMAL;
 
 				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -340,12 +340,12 @@ void HitDemoCpu(int nDamage)
 	if (g_DemoCpu.nLife <= 0)
 	{
 		SetExef(g_DemoCpu.pos,g_DemoCpu.fLength);
-		g_DemoCpu.state = DEMOCPUSTATE_DIE;
+		g_DemoCpu.state = PLAYERSTATE_DIE;
 		AddScore(-nDamage * SCORE_DIE);
 	}
 	else
 	{
-		g_DemoCpu.state = DEMOCPUSTATE_DAMAGE;
+		g_DemoCpu.state = PLAYERSTATE_DAMAGE;
 		g_DemoCpu.nCounterState = 5;
 		AddScore(-nDamage * SCORE_MISS);
 

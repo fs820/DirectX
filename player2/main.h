@@ -33,16 +33,19 @@
 #define WINDOW_NAME "「勇者は結局兵器が強いことに気付いたようです」になる予定のもの" // ウインドウ名
 #define DATA_FILE "data\\DATA\\data.bin"
 #define TEXTURE_CURSOR "data\\TEXTURE\\Cursor.png"
-#define TEXTURE_TITLE "data\\TEXTURE\\title000.png"
+#define TEXTURE_TITLE "data\\TEXTURE\\field001.jpg"
+#define TEXTURE_TITLEROGO "data\\TEXTURE\\yuusiya.png"
+#define TEXTURE_TITLEROGOTXT "data\\TEXTURE\\Rogo.png"
 #define TEXTURE_SELECT1 "data\\TEXTURE\\Enter or Start.png"
 #define TEXTURE_SELECT2 "data\\TEXTURE\\Select.png"
-#define TEXTURE_RESULT "data\\TEXTURE\\result000.png"
+#define TEXTURE_RESULT "data\\TEXTURE\\field002.jpg"
 #define TEXTURE_SELECTRESTART "data\\TEXTURE\\Restart.png"
-#define TEXTURE_NAME2 "data\\TEXTURE\\gita.png" // テクスチャ名2
+#define TEXTURE_NAME2 "data\\TEXTURE\\yuusiya.png" // テクスチャ名2
 #define TEXTURE_NAME_BULLET "data\\TEXTURE\\bullet000.png" // テクスチャ名2
 #define TEXTURE_NAME_BG1 "data\\TEXTURE\\bg100.png"
 #define TEXTURE_NAME_BG2 "data\\TEXTURE\\bg101.png"
 #define TEXTURE_NAME_BG3 "data\\TEXTURE\\bg102.png"
+#define TEXTURE_NAME_FIELD "data\\TEXTURE\\field002.jpg"
 #define TEXTURE_NAME_EXP "data\\TEXTURE\\explosion001.png"
 #define TEXTURE_NAME_ENE "data\\TEXTURE\\gi.jpg"
 #define TEXTURE_NAME_ENE2 "data\\TEXTURE\\anko.png"
@@ -53,7 +56,8 @@
 #define TEXTURE_SELECTBACK "data\\TEXTURE\\Back to Title.png"
 #define TEXTURE_SELECTRETRY "data\\TEXTURE\\Retry.png"
 #define TEXTURE_SELECTEXIT "data\\TEXTURE\\Exit.png"
-#define TEXTURE_EFFECT "data\\TEXTURE\\effect000.jpg"
+#define TEXTURE_SCORENUMBER "data\\TEXTURE\\Number.png"
+#define TEXTURE_EFFECT "data\\TEXTURE\\effect001.png"
 
 // 大きさ
 #define SCREEN_WIDTH (1280) // 幅

@@ -53,6 +53,7 @@ void UninitDemo(void)
 {
 	//サウンド
 	StopSound();
+	SetScore(0,false);
 
 	UninitScore();//スコア
 	UninitExplosion();//爆発
@@ -89,7 +90,7 @@ void UpdateDemo(void)
 	switch (g_gameStateDemo)
 	{
 	case GAMESTATE_NORMAL:
-		if (pDemoCpu->state == DEMOCPUSTATE_DIE)
+		if (pDemoCpu->state == PLAYERSTATE_DIE)
 		{
 			SetGameStateDemo(GAMESTATE_END);
 		}

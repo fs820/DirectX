@@ -162,6 +162,10 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="option.cpp" />
+    <ClCompile Include="p1back.cpp" />
+    <ClCompile Include="p2back.cpp" />
+    <ClCompile Include="p3back.cpp" />
+    <ClCompile Include="p4back.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="player2.cpp" />
     <ClCompile Include="rank.cpp" />
@@ -189,6 +193,10 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="option.h" />
+    <ClInclude Include="p1back.h" />
+    <ClInclude Include="p2back.h" />
+    <ClInclude Include="p3back.h" />
+    <ClInclude Include="p4back.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="player2.h" />
     <ClInclude Include="rank.h" />

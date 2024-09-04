@@ -16,8 +16,11 @@
 
 #define SELECT_WIDTH (512)
 #define SELECT_HEIGHT (128)
-#define RANK_MAX (5)
+#define NUMBER_WIDTH (64)
+#define NUMBER_HEIGHT (750)
+#define RANK_MAX (6)
 #define RANK_TIME (600)
+#define NUMBER_SEPAESE (20)
 
 typedef enum
 {
@@ -59,7 +62,7 @@ void InitRank(void)
 	//バッファーの設定
 	pDevice->CreateVertexBuffer
 	(
-		sizeof(VERTEX_2D) * VT_MAX * ((SCORE_MAX*MAX_DATA) + 4),
+		sizeof(VERTEX_2D) * VT_MAX * (SCORE_MAX*MAX_DATA+SELECT_MAX+2),
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -105,6 +108,14 @@ void InitRank(void)
 		pDevice,
 		TEXTURE_SELECTEXIT,
 		&g_apTextureRank[4]
+	);
+
+	//テクスチャの読み込み
+	D3DXCreateTextureFromFile
+	(
+		pDevice,
+		TEXTURE_SCORENUMBER,
+		&g_apTextureRank[5]
 	);
 
 	//過去のスコアの取得
@@ -244,6 +255,32 @@ void InitRank(void)
 
 		pVtx += VT_MAX;
 	}
+
+	//座標設定
+	pVtx[0].pos = D3DXVECTOR3((SCREEN_WIDTH / 2) - SCORE_WIDTH / 2 - NUMBER_WIDTH- NUMBER_SEPAESE, SCREEN_HEIGHT / 2 - NUMBER_HEIGHT / 2- NUMBER_SEPAESE/2, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3((SCREEN_WIDTH / 2) - SCORE_WIDTH / 2- NUMBER_SEPAESE, SCREEN_HEIGHT / 2 - NUMBER_HEIGHT / 2- NUMBER_SEPAESE/2, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3((SCREEN_WIDTH / 2) - SCORE_WIDTH / 2 - NUMBER_WIDTH- NUMBER_SEPAESE, SCREEN_HEIGHT / 2 + NUMBER_HEIGHT / 2- NUMBER_SEPAESE/2, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3((SCREEN_WIDTH / 2) - SCORE_WIDTH / 2- NUMBER_SEPAESE, SCREEN_HEIGHT / 2 + NUMBER_HEIGHT / 2- NUMBER_SEPAESE/2, 0.0f);
+
+	//rhw
+	pVtx[0].rhw = 1.0f;
+	pVtx[1].rhw = 1.0f;
+	pVtx[2].rhw = 1.0f;
+	pVtx[3].rhw = 1.0f;
+
+	//カラー
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//テクスチャ
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	pVtx += VT_MAX;
 
 	g_pVtxBuffRank->Unlock();//プレイヤーバッファのアンロック
 	PlaySound(SOUND_LABEL_BGM6);
@@ -1254,4 +1291,15 @@ void DrawRank(void)
 			);
 		}
 	}
+
+	//テクスチャの設定
+	pDevice->SetTexture(0, g_apTextureRank[5]);
+
+	//背景の描画
+	pDevice->DrawPrimitive
+	(
+		D3DPT_TRIANGLESTRIP,//タイプ
+		VT_MAX * (SCORE_MAX * MAX_DATA + SELECT_MAX+1),//始まりの番号
+		2//ポリゴンの個数
+	);
 }

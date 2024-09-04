@@ -1,4 +1,44 @@
-﻿  bullet.cpp
+﻿  back.cpp
+  boss.cpp
+  bullet.cpp
+  cursor.cpp
+  data.cpp
+  demo.cpp
+  democpu.cpp
+  effect.cpp
+  enemy.cpp
+  exef.cpp
+  explosion.cpp
+  fade.cpp
+  game.cpp
+  input.cpp
+  main.cpp
+C:\Users\student\source\repos\player2\main.cpp(47,23): warning C4302: '型キャスト': 'const char *' から 'WORD' へ切り詰めます。
+C:\Users\student\source\repos\player2\main.cpp(52,23): warning C4302: '型キャスト': 'const char *' から 'WORD' へ切り詰めます。
+  option.cpp
+  p1back.cpp
+  p2back.cpp
+  p3back.cpp
+  p4back.cpp
+  コードを生成中...
+C:\Users\student\source\repos\player2\input.cpp(418): warning C4172: ローカル変数またはテンポラリのアドレスを返します: MouseMove
+C:\Users\student\source\repos\player2\input.cpp(797): warning C4172: ローカル変数またはテンポラリのアドレスを返します: fStick
+C:\Users\student\source\repos\player2\input.cpp(2072): warning C4172: ローカル変数またはテンポラリのアドレスを返します: fStick
+C:\Users\student\source\repos\player2\data.cpp(72): warning C4172: ローカル変数またはテンポラリのアドレスを返します: aData
+C:\Users\student\source\repos\player2\data.cpp(82): warning C4172: ローカル変数またはテンポラリのアドレスを返します: aData
+  コンパイル中...
+  player.cpp
+  player2.cpp
+C:\Users\student\source\repos\player2\player2.cpp(133,9): warning C4101: 'pMouseMove': ローカル変数は 1 度も使われていません。
+C:\Users\student\source\repos\player2\player2.cpp(134,8): warning C4101: 'fMouseWheel': ローカル変数は 1 度も使われていません。
+  rank.cpp
+  result.cpp
+  score.cpp
+  sound.cpp
+  title.cpp
+  tuto.cpp
+  vs.cpp
+  コードを生成中...
 LINK : warning LNK4075: /INCREMENTAL は /PROFILE の指定によって無視されます。
 back.obj : warning LNK4075: /EDITANDCONTINUE は /OPT:REF の指定によって無視されます。
   player2.vcxproj -> C:\Users\student\source\repos\player2\Debug\player2.exe

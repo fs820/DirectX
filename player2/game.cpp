@@ -9,6 +9,10 @@
 #include"player.h"
 #include"boss.h"
 #include"back.h"
+#include"p1back.h"
+#include"p2back.h"
+#include"p3back.h"
+#include"p4back.h"
 #include"bullet.h"
 #include"effect.h"
 #include"exef.h"
@@ -52,6 +56,10 @@ void InitGame(void)
 	InitEffect();
 	InitExef();
 	InitExplosion();//爆発
+	InitP1Back();
+	InitP2Back();
+	InitP3Back();
+	InitP4Back();
 	InitScore();//スコア
 	SetScore(0,true);//スコア書き換え
 	//SetEnemy(D3DXVECTOR3(1000.0f, 200.0f, 0.0f), 0);//敵発生
@@ -163,6 +171,10 @@ void UninitGame(void)
 	StopSound();
 
 	UninitScore();//スコア
+	UninitP4Back();
+	UninitP3Back();
+	UninitP2Back();
+	UninitP1Back();
 	UninitExplosion();//爆発
 	UninitExef();
 	UninitEffect();
@@ -1133,6 +1145,10 @@ void UpdateGame(void)
 		UpdateEffect();
 		UpdateExef();
 		UpdateExplosion();//爆発
+		UpdateP1Back();
+		UpdateP2Back();
+		UpdateP3Back();
+		UpdateP4Back();
 		UpdateScore();//スコア
 	}
 }
@@ -1151,6 +1167,10 @@ void DrawGame(void)
 	DrawEffect();
 	DrawExef();
 	DrawExplosion();//爆発
+	DrawP1Back();
+	DrawP2Back();
+	DrawP3Back();
+	DrawP4Back();
 	DrawScore();//スコア
 
 	if(g_gameState==GAMESTATE_PAUSE)

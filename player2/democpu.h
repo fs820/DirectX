@@ -9,6 +9,7 @@
 #define _DEMOCPU_H_
 
 #include"main.h"
+#include"player.h"
 
 //プレイヤー情報
 #define DEMOCPU_WIDTH (160)//幅
@@ -24,14 +25,6 @@
 
 #define U_MAX_C (1)//テクスチャの数(横)
 #define V_MAX_C (1)//テクスチャの数(縦)
-
-typedef enum
-{
-	DEMOCPUSTATE_NORMAL = 0,
-	DEMOCPUSTATE_DAMAGE,
-	DEMOCPUSTATE_DIE,
-	DEMOCPUSTATE_MAX
-}PLAYERSTATE;
 
 typedef struct
 {

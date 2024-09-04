@@ -12,16 +12,21 @@
 #include"cursor.h"
 
 #define DEMO_TIME (600)
-#define TITLE_MAX (2)
-#define TITLE_TEX_MAX (3)
+#define TITLE_MAX (4)
+#define TITLE_TEX_MAX (5)
 #define SELECT_WIDTH (512)//幅
 #define SELECT_HEIGHT (128)//高さ
+#define TITLE_WIDTH (720)
+#define TITLE_HEIGHT (360)
+#define ROGO_WIDTH (512)
+#define ROGO_HEIGHT (128)
 #define U_MAX_T (1)
 #define V_MAX_T (6)
 
 typedef enum
 {
-	TITLESTATE_NORMAL = 0,
+	TITLESTATE_NONE = 0,
+	TITLESTATE_NORMAL,
 	TITLESTATE_SELECT,
 	TITLESTATE_MAX
 }TITLESTATE;
@@ -39,7 +44,8 @@ typedef enum
 
 LPDIRECT3DTEXTURE9 g_apTextureTitle[TITLE_TEX_MAX] = { NULL };//テクスチャのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL;//バッファのポインタ
-TITLESTATE g_TitleState=TITLESTATE_NORMAL;
+TITLESTATE g_TitleState=TITLESTATE_NONE;
+D3DXVECTOR3 g_RogoPos;
 
 //--------------------
 //初期化処理
@@ -76,7 +82,7 @@ void InitTitle(void)
 	D3DXCreateTextureFromFile
 	(
 		pDevice,
-		TEXTURE_SELECT1,
+		TEXTURE_TITLEROGO,
 		&g_apTextureTitle[1]
 	);
 
@@ -84,11 +90,28 @@ void InitTitle(void)
 	D3DXCreateTextureFromFile
 	(
 		pDevice,
-		TEXTURE_SELECT2,
+		TEXTURE_TITLEROGOTXT,
 		&g_apTextureTitle[2]
 	);
 
-	g_TitleState = TITLESTATE_NORMAL;
+	//テクスチャの読み込み
+	D3DXCreateTextureFromFile
+	(
+		pDevice,
+		TEXTURE_SELECT1,
+		&g_apTextureTitle[3]
+	);
+
+	//テクスチャの読み込み
+	D3DXCreateTextureFromFile
+	(
+		pDevice,
+		TEXTURE_SELECT2,
+		&g_apTextureTitle[4]
+	);
+
+	g_TitleState = TITLESTATE_NONE;
+	g_RogoPos = D3DXVECTOR3(SCREEN_WIDTH/2,-TITLE_HEIGHT,0.0f);
 	posSelect= D3DXVECTOR3(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT * (3.0f/4.0f), 0.0f);
 
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
@@ -98,6 +121,58 @@ void InitTitle(void)
 	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, 0.0f);
 	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
+
+	//rhw
+	pVtx[0].rhw = 1.0f;
+	pVtx[1].rhw = 1.0f;
+	pVtx[2].rhw = 1.0f;
+	pVtx[3].rhw = 1.0f;
+
+	//カラー
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//テクスチャ
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	pVtx += VT_MAX;
+
+	//座標設定
+	pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
+
+	//rhw
+	pVtx[0].rhw = 1.0f;
+	pVtx[1].rhw = 1.0f;
+	pVtx[2].rhw = 1.0f;
+	pVtx[3].rhw = 1.0f;
+
+	//カラー
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//テクスチャ
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	pVtx += VT_MAX;
+
+	//座標設定
+	pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
 
 	//rhw
 	pVtx[0].rhw = 1.0f;
@@ -138,19 +213,19 @@ void InitTitle(void)
 	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//テクスチャ
-	if (g_TitleState==TITLESTATE_NORMAL)
+	if (g_TitleState == TITLESTATE_SELECT)
+	{
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, UV_DEF / V_MAX_T);
+	pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T, UV_DEF / V_MAX_T);
+	}
+	else
 	{
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-	}
-	else
-	{
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, UV_DEF / V_MAX_T);
-		pVtx[3].tex = D3DXVECTOR2(UV_DEF / U_MAX_T, UV_DEF / V_MAX_T);
 	}
 
 	PlaySound(SOUND_LABEL_BGM);
@@ -192,6 +267,35 @@ void UpdateTitle(void)
 	static SELECT SelectNew = SELECT_PLAY;
 	VERTEX_2D* pVtx;//頂点情報ポインタ
 
+	if (g_TitleState==TITLESTATE_NONE)
+	{
+		g_RogoPos.y += 3;
+
+		g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
+		pVtx += VT_MAX;
+
+		//座標設定
+		pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y - TITLE_HEIGHT / 2, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + TITLE_WIDTH / 2, g_RogoPos.y + TITLE_HEIGHT / 2, 0.0f);
+
+
+		pVtx += VT_MAX;
+
+		//座標設定
+		pVtx[0].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 - ROGO_HEIGHT / 2, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(g_RogoPos.x - ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(g_RogoPos.x + ROGO_WIDTH / 2, g_RogoPos.y + ROGO_WIDTH / 2 + ROGO_HEIGHT / 2, 0.0f);
+		g_pVtxBuffTitle->Unlock();//プレイヤーバッファのアンロック
+
+		if (g_RogoPos.y >= SCREEN_HEIGHT / 4)
+		{
+			g_TitleState = TITLESTATE_NORMAL;
+		}
+	}
+
 	if (g_TitleState == TITLESTATE_NORMAL)
 	{
 		FADE fade;
@@ -205,7 +309,7 @@ void UpdateTitle(void)
 
 				g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-				pVtx += VT_MAX;
+				pVtx += VT_MAX*3;
 				//テクスチャ
 				pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 				pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -221,12 +325,12 @@ void UpdateTitle(void)
 				g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
 				pCursor = GetCursorIn();
-				if (pCursor->pos.x >= (pVtx + VT_MAX)[0].pos.x && pCursor->pos.x <= (pVtx + VT_MAX)[3].pos.x && pCursor->pos.y >= (pVtx + VT_MAX)[0].pos.y && pCursor->pos.y <= (pVtx + VT_MAX)[3].pos.y)
+				if (pCursor->pos.x >= (pVtx + VT_MAX*3)[0].pos.x && pCursor->pos.x <= (pVtx + VT_MAX*3)[3].pos.x && pCursor->pos.y >= (pVtx + VT_MAX*3)[0].pos.y && pCursor->pos.y <= (pVtx + VT_MAX*3)[3].pos.y)
 				{
 					g_TitleState = TITLESTATE_SELECT;
 					DemoCnt = 0;
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX*3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -239,7 +343,7 @@ void UpdateTitle(void)
 			DemoCnt++;
 		}
 	}
-	else
+	else if (g_TitleState == TITLESTATE_SELECT)
 	{
 		if (GetKeyboradTrigger(DIK_BACK) == true || GetJoykeyTrigger(JOYKEY_B, CONTROLLER_MAX) == true || GetMouseTrigger(MOUSE_RIGHT) == true)
 		{
@@ -247,7 +351,7 @@ void UpdateTitle(void)
 
 			g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-			pVtx += VT_MAX;
+			pVtx += VT_MAX*3;
 			//テクスチャ
 			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
@@ -342,7 +446,7 @@ void UpdateTitle(void)
 			g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
 			pCursor = GetCursorIn();
-			if (pCursor->pos.x >= (pVtx + VT_MAX)[0].pos.x && pCursor->pos.x <= (pVtx + VT_MAX)[3].pos.x && pCursor->pos.y >= (pVtx + VT_MAX)[0].pos.y && pCursor->pos.y <= (pVtx + VT_MAX)[3].pos.y)
+			if (pCursor->pos.x >= (pVtx + VT_MAX*3)[0].pos.x && pCursor->pos.x <= (pVtx + VT_MAX * 3)[3].pos.x && pCursor->pos.y >= (pVtx + VT_MAX * 3)[0].pos.y && pCursor->pos.y <= (pVtx + VT_MAX * 3)[3].pos.y)
 			{
 				FADE fade;
 				switch (SelectNew)
@@ -450,7 +554,7 @@ void UpdateTitle(void)
 
 			g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-			pVtx += VT_MAX;
+			pVtx += VT_MAX * 3;
 			//テクスチャ
 			pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 			pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -486,7 +590,7 @@ void UpdateTitle(void)
 
 			g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-			pVtx += VT_MAX;
+			pVtx += VT_MAX * 3;
 			//テクスチャ
 			pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 			pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -515,7 +619,7 @@ void UpdateTitle(void)
 
 						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-						pVtx += VT_MAX;
+						pVtx += VT_MAX * 3;
 						//テクスチャ
 						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -536,7 +640,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 					pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
@@ -650,7 +754,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -686,7 +790,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -713,7 +817,7 @@ void UpdateTitle(void)
 
 						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-						pVtx += VT_MAX;
+						pVtx += VT_MAX * 3;
 						//テクスチャ
 						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -734,7 +838,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 					pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
@@ -848,7 +952,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -884,7 +988,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -911,7 +1015,7 @@ void UpdateTitle(void)
 
 						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-						pVtx += VT_MAX;
+						pVtx += VT_MAX * 3;
 						//テクスチャ
 						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -932,7 +1036,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 					pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
@@ -1046,7 +1150,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -1082,7 +1186,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -1109,7 +1213,7 @@ void UpdateTitle(void)
 
 						g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-						pVtx += VT_MAX;
+						pVtx += VT_MAX * 3;
 						//テクスチャ
 						pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 						pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -1130,7 +1234,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 					pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
@@ -1244,7 +1348,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -1280,7 +1384,7 @@ void UpdateTitle(void)
 
 					g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);//プレイヤーバッファのロック
 
-					pVtx += VT_MAX;
+					pVtx += VT_MAX * 3;
 					//テクスチャ
 					pVtx[0].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
 					pVtx[1].tex = D3DXVECTOR2(UV_DEF / U_MAX_T * SelectNew + UV_DEF / U_MAX_T, UV_DEF / V_MAX_T * (SelectNew / U_MAX_T));
@@ -1337,16 +1441,8 @@ void DrawTitle(void)
 		2//ポリゴンの個数
 	);
 
-	if (g_TitleState==TITLESTATE_NORMAL)
-	{
-		//テクスチャの設定
-		pDevice->SetTexture(0, g_apTextureTitle[1]);
-	}
-	else
-	{
-		//テクスチャの設定
-		pDevice->SetTexture(0, g_apTextureTitle[2]);
-	}
+	//テクスチャの設定
+	pDevice->SetTexture(0, g_apTextureTitle[1]);
 
 	//背景の描画
 	pDevice->DrawPrimitive
@@ -1355,4 +1451,37 @@ void DrawTitle(void)
 		VT_MAX,//始まりの番号
 		2//ポリゴンの個数
 	);
+
+	//テクスチャの設定
+	pDevice->SetTexture(0, g_apTextureTitle[2]);
+
+	//背景の描画
+	pDevice->DrawPrimitive
+	(
+		D3DPT_TRIANGLESTRIP,//タイプ
+		VT_MAX*2,//始まりの番号
+		2//ポリゴンの個数
+	);
+
+	if (g_TitleState != TITLESTATE_NONE)
+	{
+		if (g_TitleState == TITLESTATE_SELECT)
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_apTextureTitle[4]);
+		}
+		else
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_apTextureTitle[3]);
+		}
+
+		//背景の描画
+		pDevice->DrawPrimitive
+		(
+			D3DPT_TRIANGLESTRIP,//タイプ
+			VT_MAX * 3,//始まりの番号
+			2//ポリゴンの個数
+		);
+	}
 }

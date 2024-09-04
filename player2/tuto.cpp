@@ -157,6 +157,7 @@ void UninitTuto(void)
 
 	//サウンド
 	StopSound();
+	SetScore(0,false);
 
 	UninitScore();//スコア
 	UninitExplosion();//爆発

@@ -10,8 +10,6 @@
 
 #include"main.h"
 
-#define BACK_MAX (3)
-
 void InitBack(void);//ポリゴンの初期化処理
 void UninitBack(void);//ポリゴンの終了処理
 void UpdateBack(void);//ポリゴンの更新処理

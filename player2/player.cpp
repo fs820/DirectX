@@ -276,8 +276,7 @@ void UpdatePlayer(void)
 			//’e‚ÌÝ’è
 			SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
 		}
-
-		if (GetKeyboradRepeat(DIK_U) == true || GetJoykeyRepeat(JOYKEY_Y, CONTROLLER_1) == true)
+		else if (GetKeyboradRepeat(DIK_U) == true || GetJoykeyRepeat(JOYKEY_Y, CONTROLLER_1) == true)
 		{
 			//’e‚ÌÝ’è
 			SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
@@ -382,8 +381,7 @@ void UpdatePlayer(void)
 				//’e‚ÌÝ’è
 				SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
 			}
-
-			if (GetdJoykeyRepeat(ELEKEY_Y, CONTROLLER_1) == true)
+			else if (GetdJoykeyRepeat(ELEKEY_Y, CONTROLLER_1) == true)
 			{
 				//’e‚ÌÝ’è
 				SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
@@ -449,8 +447,7 @@ void UpdatePlayer(void)
 				//’e‚ÌÝ’è
 				SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
 			}
-
-			if (GetdJoykeyRepeat(PSKEY_SQ, CONTROLLER_1) == true)
+			else if (GetdJoykeyRepeat(PSKEY_SQ, CONTROLLER_1) == true)
 			{
 				//’e‚ÌÝ’è
 				SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
@@ -515,8 +512,7 @@ void UpdatePlayer(void)
 				//’e‚ÌÝ’è
 				SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
 			}
-
-			if (GetdJoykeyRepeat(NINKEY_Y, CONTROLLER_1) == true)
+			else if (GetdJoykeyRepeat(NINKEY_Y, CONTROLLER_1) == true)
 			{
 				//’e‚ÌÝ’è
 				SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
@@ -581,8 +577,7 @@ void UpdatePlayer(void)
 				//’e‚ÌÝ’è
 				SetAllBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
 			}
-
-			if (GetdJoykeyRepeat(DKEY_Y, CONTROLLER_1) == true)
+			else if (GetdJoykeyRepeat(DKEY_Y, CONTROLLER_1) == true)
 			{
 				//’e‚ÌÝ’è
 				SetSearchBullet(g_Player.pos, g_Player.rot.z, g_Player.fLength, BULLET_LIFE, BULLETTYPE_PLAYER, BULLET_INTER);
@@ -847,14 +842,16 @@ void UpdatePlayer(void)
 		{
 		case PLAYERSTATE_NORMAL:
 			SetVibrate(0.0f, CONTROLLER_1);
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		case PLAYERSTATE_APPEAR:
 			g_Player.nCounterState++;
 			if (g_Player.nCounterState>=60)
 			{
 				g_Player.state = PLAYERSTATE_NORMAL;
-				g_Player.fLength = g_Player.fLengthDef;
-				g_Player.rot = g_Player.rotDef;
 				g_Player.bDisp = true;
 			}
 			else if (g_Player.nCounterState%5==0)

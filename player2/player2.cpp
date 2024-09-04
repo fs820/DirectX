@@ -262,23 +262,22 @@ void UpdatePlayer2(void)
 			g_moveBullet2.y = cosf(g_Player2.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
 			//íeÇÃê›íË
-			SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+			SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 		}
 		else if (GetKeyboradRelease(DIK_RCONTROL) == true || GetMouseRelease(MOUSE_RIGHT) == true || GetJoykeyRelease(JOYKEY_B, CONTROLLER_2) == true)
 		{
 			//íeÇÃê›íË
-			Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+			Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 		}
 		else if (GetKeyboradRepeat(DIK_0) == true || GetMouseRepeat(MOUSE_SENTER) == true || GetJoykeyRepeat(JOYKEY_X, CONTROLLER_2) == true)
 		{
 			//íeÇÃê›íË
-			SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+			SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 		}
-
-		if (GetKeyboradRepeat(DIK_COMMA) == true || GetJoykeyRepeat(JOYKEY_Y, CONTROLLER_2) == true)
+		else if (GetKeyboradRepeat(DIK_COMMA) == true || GetJoykeyRepeat(JOYKEY_Y, CONTROLLER_2) == true)
 		{
 			//íeÇÃê›íË
-			SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+			SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 		}
 	}
 
@@ -368,23 +367,22 @@ void UpdatePlayer2(void)
 				g_moveBullet2.y = cosf(g_Player2.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
 				//íeÇÃê›íË
-				SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+				SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 			}
 			else if (GetdJoykeyRelease(ELEKEY_B, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+				Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 			}
 			else if (GetdJoykeyRepeat(ELEKEY_X, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+				SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 			}
-
-			if (GetdJoykeyRepeat(ELEKEY_Y, CONTROLLER_2) == true)
+			else if (GetdJoykeyRepeat(ELEKEY_Y, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+				SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 
 			}
 		}
@@ -435,23 +433,22 @@ void UpdatePlayer2(void)
 				g_moveBullet2.y = cosf(g_Player2.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
 				//íeÇÃê›íË
-				SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+				SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 			}
 			else if (GetdJoykeyRelease(PSKEY_CR, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+				Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 			}
 			else if (GetdJoykeyRepeat(PSKEY_TRA, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+				SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 			}
-
-			if (GetdJoykeyRepeat(PSKEY_SQ, CONTROLLER_2) == true)
+			else if (GetdJoykeyRepeat(PSKEY_SQ, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+				SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 			}
 		}
 	}
@@ -501,23 +498,22 @@ void UpdatePlayer2(void)
 				g_moveBullet2.y = cosf(g_Player2.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
 				//íeÇÃê›íË
-				SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+				SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 			}
 			else if (GetdJoykeyRelease(NINKEY_B, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+				Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 			}
 			else if (GetdJoykeyRepeat(NINKEY_X, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+				SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 			}
-
-			if (GetdJoykeyRepeat(NINKEY_Y, CONTROLLER_2) == true)
+			else if (GetdJoykeyRepeat(NINKEY_Y, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+				SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 			}
 		}
 	}
@@ -567,23 +563,22 @@ void UpdatePlayer2(void)
 				g_moveBullet2.y = cosf(g_Player2.rot.z + D3DX_PI * 0.5f) * BULLET_SPEED;
 
 				//íeÇÃê›íË
-				SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+				SetBullet(g_Player2.pos, g_moveBullet2, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 			}
 			else if (GetdJoykeyRelease(DKEY_B, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, 1);
+				Set3Bullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, 1);
 			}
 			else if (GetdJoykeyRepeat(DKEY_X, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+				SetAllBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 			}
-
-			if (GetdJoykeyRepeat(DKEY_Y, CONTROLLER_2) == true)
+			else if (GetdJoykeyRepeat(DKEY_Y, CONTROLLER_2) == true)
 			{
 				//íeÇÃê›íË
-				SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_ENEMY, BULLET_INTER);
+				SetSearchBullet(g_Player2.pos, g_Player2.rot.z, g_Player2.fLength, BULLET_LIFE, BULLETTYPE_PLAYER2, BULLET_INTER);
 			}
 		}
 	}
@@ -597,7 +592,7 @@ void UpdatePlayer2(void)
 
 		pEnemy = GetEnemy();
 		pBoss = GetBoss();
-		pPlayer = GetPlayer2();
+		pPlayer = GetPlayer();
 		for (int i = 0; i < MAX_ENEMY; i++, pEnemy++)
 		{
 			if (pEnemy->bUse == true)
@@ -846,14 +841,16 @@ void UpdatePlayer2(void)
 		{
 		case PLAYERSTATE_NORMAL:
 			SetVibrate(0.0f, CONTROLLER_1);
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		case PLAYERSTATE_APPEAR:
 			g_Player2.nCounterState++;
 			if (g_Player2.nCounterState >= 60)
 			{
 				g_Player2.state = PLAYERSTATE_NORMAL;
-				g_Player2.fLength = g_Player2.fLengthDef;
-				g_Player2.rot = g_Player2.rotDef;
 				g_Player2.bDisp = true;
 			}
 			else if (g_Player2.nCounterState % 5 == 0)

@@ -12,7 +12,7 @@
 #include"player.h"
 
 //プレイヤー情報
-#define PLAYER2_WIDTH (160)//幅
+#define PLAYER2_WIDTH (180)//幅
 #define PLAYER2_HEIGHT (90)//高さ
 
 #define U_MAX2 (1)//テクスチャの数(横)

@@ -11,7 +11,7 @@
 #include"main.h"
 
 //ƒvƒŒƒCƒ„[î•ñ
-#define PLAYER_WIDTH (160)//•
+#define PLAYER_WIDTH (180)//•
 #define PLAYER_HEIGHT (90)//‚‚³
 #define PLAYER_SPEED_DEF (0.0f)
 #define PLAYER_SPEED_X (3.0f)//‘¬‚³

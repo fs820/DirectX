@@ -11,6 +11,7 @@
 #include"explosion.h"
 #include"player.h"
 #include"player2.h"
+#include"democpu.h"
 #include"enemy.h"
 #include"boss.h"
 
@@ -18,7 +19,8 @@
 #define BULLET3_DAMAGE (30)
 #define BULLETALL_DAMAGE (2)
 #define BULLETSEARCH_DAMAGE (1)
-#define SEARCH_TIME (20)
+#define SEARCH_TIME (30)
+#define NOSEARCH_TIME (10)
 
 //弾構造体
 typedef struct
@@ -151,11 +153,12 @@ void UpdateBullet(void)
 			{//プレイヤーの弾
 				Enemy* pEnemy;
 				Boss* pBoss;
-				Player* pPlayer2;
+				Player* pPlayer2,*pPlayer;
 
 				pEnemy = GetEnemy();
 				pBoss = GetBoss();
 				pPlayer2 = GetPlayer2();
+				pPlayer = GetPlayer();
 				float EnemyWidth = 0.0f, EnemyHeight = 0.0f;
 				for (int i2 = 0; i2 < MAX_ENEMY; i2++, pEnemy++)
 				{
@@ -188,16 +191,16 @@ void UpdateBullet(void)
 							switch (g_aBullet[i].nType)
 							{
 							case 0:
-								nDamage = BULLET_DAMAGE;
+								nDamage = (int)((float)BULLET_DAMAGE * pPlayer->fLength * 0.01f);
 								break;
 							case 1:
-								nDamage = BULLET3_DAMAGE;
+								nDamage = (int)((float)BULLET3_DAMAGE * pPlayer->fLength * 0.01f);
 								break;
 							case 2:
-								nDamage = BULLETALL_DAMAGE;
+								nDamage = (int)((float)BULLETALL_DAMAGE * pPlayer->fLength * 0.01f);
 								break;
 							case 3:
-								nDamage = BULLETSEARCH_DAMAGE;
+								nDamage = (int)((float)BULLETSEARCH_DAMAGE * pPlayer->fLength * 0.01f);
 								break;
 							}
 
@@ -212,8 +215,9 @@ void UpdateBullet(void)
 							if (!bSa[i])
 							{
 								SCount[i]++;
-								if (SCount[i] % 50 == 0)
+								if (SCount[i] % NOSEARCH_TIME == 0)
 								{
+									SCount[i] = 0;
 									bSa[i] = true;
 								}
 							}
@@ -268,20 +272,20 @@ void UpdateBullet(void)
 							switch (g_aBullet[i].nType)
 							{
 							case 0:
-								nDamage = BULLET_DAMAGE;
+								nDamage = (int)((float)BULLET_DAMAGE * pPlayer->fLength * 0.01f);
 								break;
 							case 1:
-								nDamage = BULLET3_DAMAGE;
+								nDamage = (int)((float)BULLET3_DAMAGE * pPlayer->fLength * 0.01f);
 								break;
 							case 2:
-								nDamage = BULLETALL_DAMAGE;
+								nDamage = (int)((float)BULLETALL_DAMAGE * pPlayer->fLength * 0.01f);
 								break;
 							case 3:
-								nDamage = BULLETSEARCH_DAMAGE;
+								nDamage = (int)((float)BULLETSEARCH_DAMAGE * pPlayer->fLength * 0.01f);
 								break;
 							}
 
-							HitBoss(i2, nDamage);
+   							HitBoss(i2, nDamage);
 							g_aBullet[i].bUse = false;
 						}
 						else if (g_aBullet[i].nType == 3)
@@ -292,8 +296,9 @@ void UpdateBullet(void)
 							if (!bSa[i])
 							{
 								SCount[i]++;
-								if (SCount[i] % 50 == 0)
+								if (SCount[i] % NOSEARCH_TIME == 0)
 								{
+									SCount[i] = 0;
 									bSa[i] = true;
 								}
 							}
@@ -317,6 +322,40 @@ void UpdateBullet(void)
 					}
 				}
 
+				if (GetMode()==MODE_VS)
+				{
+					if (g_aBullet[i].nType == 3)
+					{
+						float Xlong[MAX_BULLET] = { 0.0f }, Ylong[MAX_BULLET] = { 0.0f };
+						static int SCount[MAX_BULLET] = { 0 };
+						static bool bSa[MAX_BULLET] = { false };
+						if (!bSa[i])
+						{
+							SCount[i]++;
+							if (SCount[i] % NOSEARCH_TIME == 0)
+							{
+								SCount[i] = 0;
+								bSa[i] = true;
+							}
+						}
+						else
+						{
+							Xlong[i] = pPlayer2->pos.x - g_aBullet[i].pos.x;
+							Ylong[i] = pPlayer2->pos.y - g_aBullet[i].pos.y;
+
+							g_aBullet[i].move.x = sinf(atan2f(Xlong[i], Ylong[i])) * BULLET_SPEED;
+							g_aBullet[i].move.y = cosf(atan2f(Xlong[i], Ylong[i])) * BULLET_SPEED;
+
+							for (int i2 = 0; i2 < MAX_BULLET; i2++)
+							{
+								if (g_aBullet[i2].bUse == false)
+								{
+									bSa[i2] = false;
+								}
+							}
+						}
+					}
+				}
 
 				if (pPlayer2->pos.x - pPlayer2->fLength <= g_aBullet[i].pos.x + g_aBullet[i].fLength / 10.0f && pPlayer2->pos.x + pPlayer2->fLength >= g_aBullet[i].pos.x - g_aBullet[i].fLength / 10.0f && pPlayer2->pos.y - pPlayer2->fLength <= g_aBullet[i].pos.y + g_aBullet[i].fLength / 10.0f && pPlayer2->pos.y + pPlayer2->fLength >= g_aBullet[i].pos.y - g_aBullet[i].fLength / 10.0f)
 				{
@@ -325,20 +364,253 @@ void UpdateBullet(void)
 					switch (g_aBullet[i].nType)
 					{
 					case 0:
-						nDamage = BULLET_DAMAGE;
+						nDamage = (int)((float)BULLET_DAMAGE * pPlayer->fLength * 0.01f);
 						break;
 					case 1:
-						nDamage = BULLET3_DAMAGE;
+						nDamage = (int)((float)BULLET3_DAMAGE * pPlayer->fLength * 0.01f);
 						break;
 					case 2:
-						nDamage = BULLETALL_DAMAGE;
+						nDamage = (int)((float)BULLETALL_DAMAGE * pPlayer->fLength * 0.01f);
 						break;
 					case 3:
-						nDamage = BULLETSEARCH_DAMAGE;
+						nDamage = (int)((float)BULLETSEARCH_DAMAGE * pPlayer->fLength * 0.01f);
 						break;
 					}
 
 					HitPlayer2(nDamage);
+					g_aBullet[i].bUse = false;
+				}
+
+			}
+			else if (g_aBullet[i].Type == BULLETTYPE_PLAYER2)
+			{//プレイヤーの弾
+				Enemy* pEnemy;
+				Boss* pBoss;
+				Player* pPlayer2, * pPlayer;
+
+				pEnemy = GetEnemy();
+				pBoss = GetBoss();
+				pPlayer2 = GetPlayer2();
+				pPlayer = GetPlayer();
+				float EnemyWidth = 0.0f, EnemyHeight = 0.0f;
+				for (int i2 = 0; i2 < MAX_ENEMY; i2++, pEnemy++)
+				{
+					if (pEnemy->bUse == true)
+					{//敵が使用されている
+						switch (pEnemy->nType)
+						{
+						case 0:
+							EnemyWidth = ENEMY_WIDTH;
+							EnemyHeight = ENEMY_HEIGHT;
+							break;
+						case 1:
+							EnemyWidth = ENEMY_WIDTH2;
+							EnemyHeight = ENEMY_HEIGHT2;
+							break;
+						case 2:
+							EnemyWidth = ENEMY_WIDTH3;
+							EnemyHeight = ENEMY_HEIGHT3;
+							break;
+						case 3:
+							EnemyWidth = ENEMY_WIDTH4;
+							EnemyHeight = ENEMY_HEIGHT4;
+							break;
+						}
+
+						if (pEnemy->pos.x - EnemyWidth / 2 <= g_aBullet[i].pos.x + g_aBullet[i].fLength / 10.0f && pEnemy->pos.x + EnemyWidth / 2 >= g_aBullet[i].pos.x - g_aBullet[i].fLength / 10.0f && pEnemy->pos.y - EnemyHeight / 2 <= g_aBullet[i].pos.y + g_aBullet[i].fLength / 10.0f && pEnemy->pos.y + EnemyHeight / 2 >= g_aBullet[i].pos.y - g_aBullet[i].fLength / 10.0f)
+						{
+							int nDamage;
+
+							switch (g_aBullet[i].nType)
+							{
+							case 0:
+								nDamage = (int)((float)BULLET_DAMAGE * pPlayer2->fLength * 0.01f);
+								break;
+							case 1:
+								nDamage = (int)((float)BULLET3_DAMAGE * pPlayer2->fLength * 0.01f);
+								break;
+							case 2:
+								nDamage = (int)((float)BULLETALL_DAMAGE * pPlayer2->fLength * 0.01f);
+								break;
+							case 3:
+								nDamage = (int)((float)BULLETSEARCH_DAMAGE * pPlayer2->fLength * 0.01f);
+								break;
+							}
+
+							HitEnemy(i2, nDamage);
+							g_aBullet[i].bUse = false;
+						}
+						else if (g_aBullet[i].nType == 3)
+						{
+							float Xlong[MAX_BULLET] = { 0.0f }, Ylong[MAX_BULLET] = { 0.0f };
+							static int SCount[MAX_BULLET] = { 0 };
+							static bool bSa[MAX_BULLET] = { false };
+							if (!bSa[i])
+							{
+								SCount[i]++;
+								if (SCount[i] % NOSEARCH_TIME == 0)
+								{
+									SCount[i] = 0;
+									bSa[i] = true;
+								}
+							}
+							else
+							{
+								Xlong[i] = pEnemy->pos.x - g_aBullet[i].pos.x;
+								Ylong[i] = pEnemy->pos.y - g_aBullet[i].pos.y;
+
+								g_aBullet[i].move.x = sinf(atan2f(Xlong[i], Ylong[i])) * BULLET_SPEED;
+								g_aBullet[i].move.y = cosf(atan2f(Xlong[i], Ylong[i])) * BULLET_SPEED;
+
+								for (int i2 = 0; i2 < MAX_BULLET; i2++)
+								{
+									if (g_aBullet[i2].bUse == false)
+									{
+										bSa[i2] = false;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				for (int i2 = 0; i2 < MAX_BOSS; i2++, pBoss++)
+				{
+					if (pBoss->bUse == true)
+					{//敵が使用されている
+						switch (pBoss->nType)
+						{
+						case 0:
+							EnemyWidth = BOSS_WIDTH;
+							EnemyHeight = BOSS_HEIGHT;
+							break;
+						case 1:
+							EnemyWidth = BOSS_WIDTH2;
+							EnemyHeight = BOSS_HEIGHT2;
+							break;
+						case 2:
+							EnemyWidth = BOSS_WIDTH3;
+							EnemyHeight = BOSS_HEIGHT3;
+							break;
+						case 3:
+							EnemyWidth = BOSS_WIDTH4;
+							EnemyHeight = BOSS_HEIGHT4;
+							break;
+						}
+
+						if (pBoss->pos.x - EnemyWidth / 2 <= g_aBullet[i].pos.x + g_aBullet[i].fLength / 10.0f && pBoss->pos.x + EnemyWidth / 2 >= g_aBullet[i].pos.x - g_aBullet[i].fLength / 10.0f && pBoss->pos.y - EnemyHeight / 2 <= g_aBullet[i].pos.y + g_aBullet[i].fLength / 10.0f && pBoss->pos.y + EnemyHeight / 2 >= g_aBullet[i].pos.y - g_aBullet[i].fLength / 10.0f)
+						{
+							int nDamage;
+
+							switch (g_aBullet[i].nType)
+							{
+							case 0:
+								nDamage = (int)((float)BULLET_DAMAGE * pPlayer2->fLength * 0.01f);
+								break;
+							case 1:
+								nDamage = (int)((float)BULLET3_DAMAGE * pPlayer2->fLength * 0.01f);
+								break;
+							case 2:
+								nDamage = (int)((float)BULLETALL_DAMAGE * pPlayer2->fLength * 0.01f);
+								break;
+							case 3:
+								nDamage = (int)((float)BULLETSEARCH_DAMAGE * pPlayer2->fLength * 0.01f);
+								break;
+							}
+
+							HitBoss(i2, nDamage);
+							g_aBullet[i].bUse = false;
+						}
+						else if (g_aBullet[i].nType == 3)
+						{
+							float Xlong[MAX_BULLET] = { 0.0f }, Ylong[MAX_BULLET] = { 0.0f };
+							static int SCount[MAX_BULLET] = { 0 };
+							static bool bSa[MAX_BULLET] = { false };
+							if (!bSa[i])
+							{
+								SCount[i]++;
+								if (SCount[i] % NOSEARCH_TIME == 0)
+								{
+									SCount[i] = 0;
+									bSa[i] = true;
+								}
+							}
+							else
+							{
+								Xlong[i] = pBoss->pos.x - g_aBullet[i].pos.x;
+								Ylong[i] = pBoss->pos.y - g_aBullet[i].pos.y;
+
+								g_aBullet[i].move.x = sinf(atan2f(Xlong[i], Ylong[i])) * BULLET_SPEED;
+								g_aBullet[i].move.y = cosf(atan2f(Xlong[i], Ylong[i])) * BULLET_SPEED;
+
+								for (int i2 = 0; i2 < MAX_BULLET; i2++)
+								{
+									if (g_aBullet[i2].bUse == false)
+									{
+										bSa[i2] = false;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				if (GetMode() == MODE_VS)
+				{
+					if (g_aBullet[i].nType == 3)
+					{
+						float Xlong[MAX_BULLET] = { 0.0f }, Ylong[MAX_BULLET] = { 0.0f };
+						static int SCount[MAX_BULLET] = { 0 };
+						static bool bSa[MAX_BULLET] = { false };
+						if (!bSa[i])
+						{
+							SCount[i]++;
+							if (SCount[i] % NOSEARCH_TIME == 0)
+							{
+								SCount[i] = 0;
+								bSa[i] = true;
+							}
+						}
+						else
+						{
+							Xlong[i] = pPlayer->pos.x - g_aBullet[i].pos.x;
+							Ylong[i] = pPlayer->pos.y - g_aBullet[i].pos.y;
+
+							g_aBullet[i].move.x = sinf(atan2f(Xlong[i], Ylong[i])) * BULLET_SPEED;
+							g_aBullet[i].move.y = cosf(atan2f(Xlong[i], Ylong[i])) * BULLET_SPEED;
+
+							for (int i2 = 0; i2 < MAX_BULLET; i2++)
+							{
+								if (g_aBullet[i2].bUse == false)
+								{
+									bSa[i2] = false;
+								}
+							}
+						}
+					}
+				}
+
+				if (pPlayer->pos.x - pPlayer->fLength <= g_aBullet[i].pos.x + g_aBullet[i].fLength / 10.0f && pPlayer->pos.x + pPlayer->fLength >= g_aBullet[i].pos.x - g_aBullet[i].fLength / 10.0f && pPlayer->pos.y - pPlayer->fLength <= g_aBullet[i].pos.y + g_aBullet[i].fLength / 10.0f && pPlayer->pos.y + pPlayer->fLength >= g_aBullet[i].pos.y - g_aBullet[i].fLength / 10.0f)
+				{
+					int nDamage;
+
+					switch (g_aBullet[i].nType)
+					{
+					case 0:
+						nDamage = (int)((float)BULLET_DAMAGE * pPlayer2->fLength * 0.01f);
+						break;
+					case 1:
+						nDamage = (int)((float)BULLET3_DAMAGE * pPlayer2->fLength * 0.01f);
+						break;
+					case 2:
+						nDamage = (int)((float)BULLETALL_DAMAGE * pPlayer2->fLength * 0.01f);
+						break;
+					case 3:
+						nDamage = (int)((float)BULLETSEARCH_DAMAGE * pPlayer2->fLength * 0.01f);
+						break;
+					}
+
+					HitPlayer(nDamage);
 					g_aBullet[i].bUse = false;
 				}
 
@@ -368,7 +640,14 @@ void UpdateBullet(void)
 						break;
 					}
 
-					HitPlayer(nDamage);
+					if (GetMode()==MODE_DEMO)
+					{
+						HitDemoCpu(nDamage);
+					}
+					else
+					{
+						HitPlayer(nDamage);
+					}
 					g_aBullet[i].bUse = false;
 				}
 				else if (g_aBullet[i].nType == 3)
@@ -376,12 +655,14 @@ void UpdateBullet(void)
 					static bool bSa[MAX_BULLET] = { true };
 					static int nSaCnt[MAX_BULLET] = { 0 };
 					float Xlong[MAX_BULLET] = { 0.0f }, Ylong[MAX_BULLET] = { 0.0f };
+					nSaCnt[i]++;
 
 					Xlong[i] = pPlayer->pos.x - g_aBullet[i].pos.x;
 					Ylong[i] = pPlayer->pos.y - g_aBullet[i].pos.y;
 
 					if (nSaCnt[i] % SEARCH_TIME == 0)
 					{
+						nSaCnt[i] = 0;
 						bSa[i] = false;
 					}
 
@@ -398,7 +679,6 @@ void UpdateBullet(void)
 							bSa[i2] = true;
 						}
 					}
-					nSaCnt[i]++;
 				}
 			}
 			else if (g_aBullet[i].Type == BULLETTYPE_BOSS)
@@ -426,7 +706,14 @@ void UpdateBullet(void)
 						break;
 					}
 
-					HitPlayer(nDamage);
+					if (GetMode() == MODE_DEMO)
+					{
+						HitDemoCpu(nDamage);
+					}
+					else
+					{
+						HitPlayer(nDamage);
+					}
 					g_aBullet[i].bUse = false;
 				}
 				else if (g_aBullet[i].nType == 3)
@@ -434,12 +721,14 @@ void UpdateBullet(void)
 					static bool bSa[MAX_BULLET] = { true };
 					static int nSaCnt[MAX_BULLET] = { 0 };
 					float Xlong[MAX_BULLET] = { 0.0f }, Ylong[MAX_BULLET] = { 0.0f };
+					nSaCnt[i]++;
 
 					Xlong[i] = pPlayer->pos.x - g_aBullet[i].pos.x;
 					Ylong[i] = pPlayer->pos.y - g_aBullet[i].pos.y;
 
 					if (nSaCnt[i] % SEARCH_TIME == 0)
 					{
+						nSaCnt[i] = 0;
 						bSa[i] = false;
 					}
 
@@ -456,7 +745,6 @@ void UpdateBullet(void)
 							bSa[i2] = true;
 						}
 					}
-					nSaCnt[i]++;
 				}
 			}
 
@@ -503,16 +791,16 @@ void UpdateBullet(void)
 			switch (g_aBullet[i].nType)
 			{
 			case 0:
-				col = D3DXCOLOR(0.8f, 0.0f, 0.0f, 0.2f);
+				col = D3DXCOLOR(0.8f, 0.0f, 0.0f, (float)(rand() % 51) / 100.0f);
 				break;
 			case 1:
-				col = D3DXCOLOR(0.0f, 0.8f, 0.0f, 0.2f);
+				col = D3DXCOLOR(0.0f, 0.8f, 0.0f, (float)(rand() % 51) / 100.0f);
 				break;
 			case 2:
-				col = D3DXCOLOR(0.0f, 0.0f, 0.8f, 0.2f);
+				col = D3DXCOLOR(0.0f, 0.0f, 0.8f, (float)(rand() % 51) / 100.0f);
 				break;
 			case 3:
-				col = D3DXCOLOR(0.0f, 0.8f, 0.8f, 0.2f);
+				col = D3DXCOLOR(0.0f, 0.8f, 0.8f, (float)(rand() % 51) / 100.0f);
 				break;
 			}
 

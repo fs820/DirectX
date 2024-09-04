@@ -1,20 +1,7 @@
-﻿  boss.cpp
-  bullet.cpp
-  demo.cpp
-  democpu.cpp
-  enemy.cpp
-  game.cpp
-  player.cpp
-  player2.cpp
-C:\Users\student\source\repos\player2\player2.cpp(133,9): warning C4101: 'pMouseMove': ローカル変数は 1 度も使われていません。
-C:\Users\student\source\repos\player2\player2.cpp(134,8): warning C4101: 'fMouseWheel': ローカル変数は 1 度も使われていません。
-  rank.cpp
-  result.cpp
-  score.cpp
-  tuto.cpp
+﻿  rank.cpp
   コード生成しています。
-  35 of 229 functions (15.3%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
+  1 of 247 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
     16 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   player2.vcxproj -> C:\Users\student\source\repos\player2\player2.exe

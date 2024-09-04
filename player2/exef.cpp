@@ -67,7 +67,7 @@ void UpdateExef(void)
 				fspeed = (float)(rand() % 100) / 10.0f + 1.0f;
 				move.x = sinf(fangle) * fspeed;
 				move.y = cosf(fangle) * fspeed;
-				col = D3DXCOLOR((float)(rand() % 101) / 100.0f, (float)(rand() % 101) / 100.0f, (float)(rand() % 101) / 100.0f, 0.2f);
+				col = D3DXCOLOR((float)(rand() % 101) / 100.0f, (float)(rand() % 101) / 100.0f, (float)(rand() % 101) / 100.0f, (float)(rand() % 51) / 100.0f);
 				fRadius = (float)(rand() % (int)(g_aExef[i].fLength+1.0f) * 2.0f);
 				nLife = g_aExef[i].nLife;
 
